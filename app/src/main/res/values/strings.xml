@@ -1,0 +1,80 @@
+<resources>
+    <!-- Register screen strings -->
+    <string name="app_name">StudentRegistrationApp</string>
+    <string name="register_title">Create your account</string>
+    <string name="label_full_name">Full name</string>
+    <string name="label_student_number">Student number</string>
+    <string name="label_programme">Programme</string>
+    <string-array name="programmes_list">
+        <item>Computer Science</item>
+        <item>Information Technology</item>
+        <item>Data Science</item>
+        <item>Cyber Security</item>
+        <item>Software Engineering</item>
+        <item>International Relations and Development Studies</item>
+        <item>Civil Engineering</item>
+        <item>Electrical and Electronics Engineering</item>
+        <item>Biological Sciences</item>
+        <item>Business Administration</item>
+    </string-array>
+    <string name="label_claim_code">Claim code</string>
+    <string name="label_password">Password</string>
+    <string name="action_register">Register</string>
+    <string name="action_sign_in_instead">Already have an account? Sign in</string>
+    <string name="hint_student_number">9 digits</string>
+    <string name="error_password_short">Must be 8 or more characters</string>
+    <string name="status_draft_saved">Draft saved — offline</string>
+
+
+    <!-- Sign in screen strings -->
+    <string name="signin_title">Sign in</string>
+    <string name="label_student_number_or_email">Student number or email</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_register_instead">Register instead</string>
+
+    <!-- Profile screen strings -->
+    <string name="profile_title">My profile</string>
+    <string name="label_name">Name</string>
+    <string name="label_programme_display">Programme</string>
+    <string name="label_student_number_locked">Student number (locked)</string>
+    <string name="action_request_correction">Request number correction</string>
+    <string name="label_group_status">Group</string>
+    <string name="action_request_group_change">Request group change</string>
+    <string name="status_pending_confirmation">Status: Pending confirmation</string>
+
+    <!-- Roster screen strings -->
+    <string name="roster_title">Student roster</string>
+    <string name="hint_search_roster">Search by name or number</string>
+    <string name="filter_all_groups">All groups</string>
+    <string name="filter_all_programmes">All programmes</string>
+    <string name="action_add_student">Add student</string>
+    <string name="empty_roster">No students match your search</string>
+    <string name="loading_roster">Loading students…</string>
+    <string name="action_edit_student">Edit student</string>
+
+    <string name="label_sign_in_as">Sign in as</string>
+    <string name="role_student">Student</string>
+    <string name="role_lecturer">Lecturer</string>
+
+    <!-- Student editor screen strings -->
+    <string name="editor_title_add">Add student</string>
+    <string name="editor_title_edit">Edit student</string>
+    <string name="label_editor_full_name">Full name</string>
+    <string name="label_editor_student_number">Student number</string>
+    <string name="label_editor_programme">Programme</string>
+    <string name="label_lab_group">Lab group</string>
+    <string name="action_save_student">Save</string>
+    <string name="action_delete_student">Delete student</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_group_full">This group already has 15 students</string>
+
+    <!-- Sync/Error status strings -->
+    <string name="sync_status_offline">You\'re offline — changes will sync later</string>
+    <string name="sync_status_syncing">Syncing…</string>
+    <string name="sync_status_synced">All changes synced</string>
+    <string name="sync_status_conflict">Sync conflict — tap to resolve</string>
+    <string name="sync_status_error">Sync failed — tap to retry</string>
+
+    <string name="action_back">← Back</string>
+
+</resources>
