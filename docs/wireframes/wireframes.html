@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ICT361 Wireframes — Activity A</title>
+<style>
+  :root{
+    --ink:#1c1c1c;
+    --line:#8a8a8a;
+    --panel:#f6f6f4;
+    --accent:#2c5f6f;
+    --note:#6b6b6b;
+  }
+  body{
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    color:var(--ink);
+    background:#fff;
+    margin:0;
+    padding:32px 24px 80px;
+    max-width:1100px;
+    margin-inline:auto;
+  }
+  h1{font-size:22px;margin-bottom:4px;}
+  .sub{color:var(--note);font-size:13px;margin-bottom:36px;}
+  .screen{
+    border:1px solid var(--line);
+    border-radius:4px;
+    margin-bottom:48px;
+    overflow:hidden;
+  }
+  .screen-head{
+    background:var(--panel);
+    padding:10px 16px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .screen-head h2{font-size:15px;margin:0;}
+  .screen-head span{font-size:11px;color:var(--note);}
+  .frame{
+    display:grid;
+    grid-template-columns: 300px 1fr;
+  }
+  .mock{
+    padding:20px;
+    border-right:1px dashed var(--line);
+    background:repeating-linear-gradient(45deg, #fff, #fff 10px, #fbfbfb 10px, #fbfbfb 20px);
+  }
+  .phone{
+    width:240px;
+    min-height:420px;
+    border:2px solid var(--ink);
+    border-radius:18px;
+    padding:14px 10px;
+    background:#fff;
+    margin:0 auto;
+  }
+  .bar{height:22px;border:1px dashed var(--line);border-radius:3px;margin-bottom:10px;font-size:10px;color:var(--note);display:flex;align-items:center;padding-left:6px;}
+  .field{height:34px;border:1px solid var(--line);border-radius:4px;margin-bottom:8px;font-size:10px;color:var(--note);display:flex;align-items:center;padding-left:8px;}
+  .field.err{border-color:#b3392c;color:#b3392c;}
+  .btn{height:38px;border:1px solid var(--ink);border-radius:4px;margin-top:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;}
+  .btn.primary{background:var(--ink);color:#fff;}
+  .row{display:flex;gap:6px;}
+  .chip{flex:1;height:26px;border:1px solid var(--line);border-radius:12px;font-size:9px;color:var(--note);display:flex;align-items:center;justify-content:center;}
+  .list-row{height:30px;border-bottom:1px solid #e3e3e3;font-size:9px;color:var(--note);display:flex;align-items:center;padding-left:6px;}
+  .annot{padding:20px 24px;}
+  .annot h3{font-size:12px;text-transform:none;color:var(--accent);margin:0 0 8px;}
+  .annot ul{margin:0 0 16px 18px;padding:0;font-size:13px;line-height:1.55;}
+  .annot ul:last-child{margin-bottom:0;}
+  .tag{display:inline-block;font-size:10px;border:1px solid var(--accent);color:var(--accent);border-radius:10px;padding:1px 8px;margin:0 4px 4px 0;}
+  footer{font-size:11px;color:var(--note);margin-top:20px;}
+</style>
+</head>
+<body>
+
+<h1>Activity A — Annotated Wireframes</h1>
+<div class="sub">Android student registration &amp; lab group management · ICT361 · low-fidelity, for feedback + Unit 2 slide 15–20 &amp; 30–35 review</div>
+
+<!-- REGISTRATION -->
+<div class="screen">
+  <div class="screen-head"><h2>1. Register</h2><span>Student · unauthenticated</span></div>
+  <div class="frame">
+    <div class="mock"><div class="phone">
+      <div class="bar">&larr; Back</div>
+      <div class="bar">Create your account</div>
+      <div class="field">Full name</div>
+      <div class="field">Student number (9 digits)</div>
+      <div class="field">Programme ▾ (CS / IT / DS)</div>
+      <div class="field">Claim code</div>
+      <div class="field err">Password must be 8+ characters</div>
+      <div class="btn primary">Register</div>
+      <div class="bar" style="margin-top:10px;">Draft saved — offline</div>
+    </div></div>
+    <div class="annot">
+      <h3>Annotations</h3>
+      <ul>
+        <li>Every field has a persistent visible label, not placeholder-only text (Slide 18 — ask only what's needed, right keyboard type, keep input intact).</li>
+        <li>Inline error sits directly under the field it belongs to, in plain language, no stack trace (Slide 19 — error messages that help).</li>
+        <li>Offline: fields stay filled and a "draft saved" indicator appears — nothing is lost if the app is killed (Slide 20 — offline states preserve confidence).</li>
+        <li>Claim code links this registration to a record the lecturer may have pre-entered, preventing duplicate profiles (brief requirement, not a slide principle).</li>
+        <li>Touch targets ≥ 48dp; buttons full-width for easy reach (Slide 17 — touch targets and thumb zones).</li>
+      </ul>
+      <div class="tag">Slide 15 — Predictable Back</div><div class="tag">Slide 18 — Preserved input</div><div class="tag">Slide 17 — Large touch targets</div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGN IN -->
+<div class="screen">
+  <div class="screen-head"><h2>2. Sign in</h2><span>Student &amp; lecturer</span></div>
+  <div class="frame">
+    <div class="mock"><div class="phone">
+      <div class="bar">Sign in</div>
+      <div class="field">Student number or email</div>
+      <div class="field">Password</div>
+      <div class="btn primary">Sign in</div>
+      <div class="bar">Register instead</div>
+      <div class="bar" style="margin-top:20px;">Role is detected from the account — no separate toggle</div>
+    </div></div>
+    <div class="annot">
+      <h3>Annotations</h3>
+      <ul>
+        <li>One sign-in form for both roles; role comes from the account, not a picker (reduces user error; brief requirement).</li>
+        <li>Session token stored securely; never stores raw password on device (security requirement, not a Unit 2 UI slide).</li>
+        <li>Focus order: field 1 → field 2 → button, verified with TalkBack (Slide 31 — screen reader friendly design, focus order follows visual/task order).</li>
+        <li>Error state (wrong credentials) reuses the same inline-error pattern as registration for consistency (Slide 19 — error messages that help).</li>
+      </ul>
+      <div class="tag">Slide 19 — Consistent error pattern</div><div class="tag">Slide 31 — TalkBack focus order</div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT PROFILE/GROUP -->
+<div class="screen">
+  <div class="screen-head"><h2>3. My profile &amp; group</h2><span>Student · authenticated</span></div>
+  <div class="frame">
+    <div class="mock"><div class="phone">
+      <div class="bar">&larr; My profile</div>
+      <div class="bar">Name: (editable) · Programme: (editable)</div>
+      <div class="bar">Student number: (locked — request correction)</div>
+      <div class="bar" style="background:var(--panel);">Group: G02 — 12 / 15 members</div>
+      <div class="btn">Request group change</div>
+      <div class="btn">Request number correction</div>
+      <div class="bar" style="margin-top:10px;">Status: Pending confirmation</div>
+    </div></div>
+    <div class="annot">
+      <h3>Annotations</h3>
+      <ul>
+        <li>Student number field is visibly locked (icon + muted style) — only lecturers can change it, protecting identity (brief requirement).</li>
+        <li>Group occupancy shown live (12/15) so the student understands capacity before requesting a change (Slide 30 — accessibility is not optional, clear labelling supports all users).</li>
+        <li>Status labels ("Pending", "Synced") are text, not colour-only, for colour-blind and low-contrast users (Slide 30 — accessibility supports visual limitations and temporary conditions like glare).</li>
+      </ul>
+      <div class="tag">Ownership protection</div><div class="tag">Slide 30 — Not colour-only status</div>
+    </div>
+  </div>
+</div>
+
+<!-- LECTURER ROSTER -->
+<div class="screen">
+  <div class="screen-head"><h2>4. Lecturer roster</h2><span>Lecturer · authenticated</span></div>
+  <div class="frame">
+    <div class="mock"><div class="phone">
+      <div class="bar">Search name or number…</div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="chip">Programme ▾</div><div class="chip">Group ▾</div><div class="chip">Unassigned</div>
+      </div>
+      <div class="list-row">Banda, Chileshe · CS · G01</div>
+      <div class="list-row">Phiri, Mwansa · IT · G02</div>
+      <div class="list-row">Tembo, Natasha · DS · Unassigned</div>
+      <div class="list-row">… paginated</div>
+      <div class="btn">+ Add student</div>
+    </div></div>
+    <div class="annot">
+      <h3>Annotations</h3>
+      <ul>
+        <li>Search + programme + group filters combine (AND logic); "Unassigned" is an explicit filter option, not a gap (brief requirement).</li>
+        <li>List paginates for large rosters; each row is a full-width tappable target, not just the text (Slide 17 — touch targets and thumb zones, space targets to reduce errors).</li>
+        <li>Row tap opens the student editor (screen 5); swipe or menu exposes delete with confirmation (Slide 15 — back behaviour and user trust, avoid accidental destructive actions).</li>
+      </ul>
+      <div class="tag">Combined filters</div><div class="tag">Slide 17 — Full-row tap target</div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT EDITOR -->
+<div class="screen">
+  <div class="screen-head"><h2>5. Student editor</h2><span>Lecturer · edit/delete</span></div>
+  <div class="frame">
+    <div class="mock"><div class="phone">
+      <div class="bar">&larr; Edit student</div>
+      <div class="field">Name</div>
+      <div class="field">Student number</div>
+      <div class="field">Programme ▾</div>
+      <div class="field">Group ▾ — G02 (12/15)</div>
+      <div class="btn primary">Save changes</div>
+      <div class="btn" style="border-color:#b3392c;color:#b3392c;">Delete student</div>
+    </div></div>
+    <div class="annot">
+      <h3>Annotations</h3>
+      <ul>
+        <li>Group dropdown shows live occupancy next to each option; a full group (15/15) is shown but disabled with a reason (Slide 19 — errors explain what happened, not just that it failed).</li>
+        <li>Delete opens a confirm dialog ("This will free their place in G02 — Cancel / Delete") before anything happens (Slide 15 — back behaviour and user trust, confirm when loss is possible; Slide 16 — don't make destructive actions easy to trigger accidentally).</li>
+        <li>Failed transfer (e.g. group filled between load and save) shows an inline message and keeps the previous group selected (Slide 19 — error messages that help, state what went wrong and how to recover).</li>
+      </ul>
+      <div class="tag">Slide 15/16 — Confirm before delete</div><div class="tag">Slide 19 — Capacity-aware picker</div>
+    </div>
+  </div>
+</div>
+
+<!-- SYNC / ERROR -->
+<div class="screen">
+  <div class="screen-head"><h2>6. Sync &amp; error states</h2><span>Both roles</span></div>
+  <div class="frame">
+    <div class="mock"><div class="phone">
+      <div class="bar" style="background:var(--panel);">● Saved locally</div>
+      <div class="bar" style="background:var(--panel);">● Pending</div>
+      <div class="bar" style="background:var(--panel);">↻ Syncing…</div>
+      <div class="bar" style="background:var(--panel);">✓ Synced</div>
+      <div class="bar" style="border-color:#b3392c;color:#b3392c;">⚠ Action required — conflict</div>
+      <div class="btn">Manual sync now</div>
+    </div></div>
+    <div class="annot">
+      <h3>Annotations</h3>
+      <ul>
+        <li>Every sync state is a text label plus icon — never colour alone — and announced to TalkBack when it changes (Slide 20 — offline/loading states are part of UX, not decoration; Slide 31 — screen reader friendly design).</li>
+        <li>"Action required" opens a compare view: your proposed edit vs. the current server record, so nothing is silently overwritten (Slide 19 — error messages explain how the user can recover).</li>
+        <li>Manual "Sync now" always available, on top of automatic WorkManager retries (Slide 20 — loading states should reassure users that work is progressing).</li>
+      </ul>
+      <div class="tag">Slide 20/31 — Text + icon status</div><div class="tag">Slide 19 — Conflict compare view</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Test plan, cited to slides: verify all six screens at 200% system text size, no clipped text/overlap (Slide 35 —
+  responsive design across devices and settings). Full TalkBack pass end-to-end, checking content descriptions and
+  focus order (Slide 31/32 — screen reader friendly design, content description example). Confirm typed input
+  survives a forced rotation and an app-kill/restore on the Register and Student Editor screens (Unit 1, referenced
+  in the brief alongside Activity B — not a Unit 2 slide). Get three classmates to complete "register" and "find your
+  group" unaided — log their friction points and the two changes made in response, per the competency evidence
+  requirement.
+</footer>
+
+</body>
+</html>
