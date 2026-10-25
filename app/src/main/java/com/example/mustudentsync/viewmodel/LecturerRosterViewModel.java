@@ -24,9 +24,14 @@ public class LecturerRosterViewModel extends AndroidViewModel {
 
     private final MediatorLiveData<List<StudentEntity>> roster = new MediatorLiveData<>();
 
+    // All active students, ignoring search and filters. Used for the share summary,
+    // so the counts stay correct even when the lecturer has filtered the list.
+    private final LiveData<List<StudentEntity>> allStudents;
+
     public LecturerRosterViewModel(@NonNull Application application) {
         super(application);
         this.repository = new RoomStudentRepository(application);
+        this.allStudents = repository.getRoster("", "All Programs", "All Groups");
 
         Runnable refresh = () -> {
             LiveData<List<StudentEntity>> source = repository.getRoster(
@@ -41,6 +46,10 @@ public class LecturerRosterViewModel extends AndroidViewModel {
 
     public LiveData<List<StudentEntity>> getRoster() {
         return roster;
+    }
+
+    public LiveData<List<StudentEntity>> getAllStudents() {
+        return allStudents;
     }
 
     public void setSearchQuery(String query) {
@@ -59,7 +68,7 @@ public class LecturerRosterViewModel extends AndroidViewModel {
         return searchQuery.getValue();
     }
 
-    /** Result arrives on the main thread via callback — never blocks the UI thread. */
+    /** Result arrives on the main thread via callback, never blocks the UI thread. */
     public void isGroupFull(String labGroup, StudentRepository.GroupFullCallback callback) {
         repository.isGroupFullAsync(labGroup, callback);
     }
