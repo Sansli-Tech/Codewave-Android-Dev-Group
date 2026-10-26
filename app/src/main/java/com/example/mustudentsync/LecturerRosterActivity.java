@@ -15,9 +15,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.mustudentsync.model.StudentEntity;
+import com.example.mustudentsync.share.GroupSummaryCalculator;
+import com.example.mustudentsync.share.ShareHelper;
 import com.example.mustudentsync.viewmodel.LecturerRosterViewModel;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LecturerRosterActivity extends AppCompatActivity
         implements StudentRosterAdapter.OnStudentActionListener {
@@ -28,6 +34,10 @@ public class LecturerRosterActivity extends AppCompatActivity
     private ProgressBar progressRoster;
     private TextView tvEmptyRoster;
     private FloatingActionButton fabAddStudent;
+    private MaterialButton btnShareSummary;
+
+    // Latest full list of active students, kept for the share summary.
+    private List<StudentEntity> allStudents = new ArrayList<>();
 
     private static final String[] FILTER_PROGRAMS = buildProgramFilterOptions();
 
@@ -65,6 +75,7 @@ public class LecturerRosterActivity extends AppCompatActivity
         progressRoster = findViewById(R.id.progressRoster);
         tvEmptyRoster = findViewById(R.id.tvEmptyRoster);
         fabAddStudent = findViewById(R.id.fabAddStudent);
+        btnShareSummary = findViewById(R.id.btnShareSummary);
     }
 
     private void setupFilters() {
@@ -101,6 +112,10 @@ public class LecturerRosterActivity extends AppCompatActivity
             tvEmptyRoster.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
             rvRoster.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
         });
+
+        // Full list (ignores search and filters) for the share summary.
+        viewModel.getAllStudents().observe(this, students ->
+                allStudents = students == null ? new ArrayList<>() : students);
     }
 
     private void setupListeners() {
@@ -117,6 +132,10 @@ public class LecturerRosterActivity extends AppCompatActivity
             intent.putExtra("IS_EDIT_MODE", false);
             startActivity(intent);
         });
+
+        // Shares group labels and counts only. No names or student numbers.
+        btnShareSummary.setOnClickListener(v ->
+                ShareHelper.shareSummary(this, GroupSummaryCalculator.buildText(allStudents)));
     }
 
     @Override

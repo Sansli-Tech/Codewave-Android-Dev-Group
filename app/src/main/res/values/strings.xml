@@ -66,4 +66,6 @@
     <!-- Component 6: Sync/Status Banner -->
     <string name="banner_offline_mode">Offline — showing cached results</string>
     <string name="banner_conflict_mode">Sync conflict detected — tap to resolve</string>
+    <string name="action_share_summary">Share group summary</string>
+
 </resources>
