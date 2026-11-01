@@ -40,6 +40,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/students', require('./routes/students'));
 app.use('/api/groups', require('./routes/groups'));
 app.use('/api/sync', require('./routes/sync'));
+app.use('/api/me', require('./routes/me'));
+app.use('/api/correction-requests', require('./routes/correctionRequests'));
 
 app.use((req, res) => {
   res.status(404).json({

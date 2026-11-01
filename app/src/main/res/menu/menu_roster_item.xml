@@ -9,4 +9,7 @@
     <item
         android:id="@+id/action_delete_student"
         android:title="@string/roster_menu_delete" />
+    <item
+        android:id="@+id/action_discard_change"
+        android:title="@string/roster_menu_discard_change" />
 </menu>

@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.mustudentsync.data.SyncManager;
+import com.example.mustudentsync.data.OutboxRepository;
 import com.example.mustudentsync.model.StudentEntity;
 import com.example.mustudentsync.util.GroupCatalog;
 import com.example.mustudentsync.util.ProgrammeCatalog;
@@ -60,10 +60,19 @@ public class StudentEditorActivity extends AppCompatActivity {
             viewModel.getStudent(editId).observe(this, s -> {
                 if (s == null || editing != null) return;
                 editing = s;
-                etEditorName.setText(s.fullName);
-                etEditorNumber.setText(s.studentNumber);
-                actvEditorProgram.setText(s.program, false);
-                int index = groups.indexOf(s.labGroup);
+                // A change still waiting to sync is shown, so the lecturer continues from it.
+                String name = s.fullName, number = s.studentNumber, program = s.program, group = s.labGroup;
+                com.google.gson.JsonObject pending = pendingValues(s);
+                if (pending != null && pending.has("student_name")) {
+                    name = pending.get("student_name").getAsString();
+                    number = pending.get("student_number").getAsString();
+                    program = ProgrammeCatalog.nameFor(pending.get("programme_code").getAsString());
+                    group = pending.get("group_code").isJsonNull() ? UNASSIGNED : pending.get("group_code").getAsString();
+                }
+                etEditorName.setText(name);
+                etEditorNumber.setText(number);
+                actvEditorProgram.setText(program, false);
+                int index = groups.indexOf(group);
                 spnEditorGroup.setSelection(index >= 0 ? index : 0);
             });
         }
@@ -179,27 +188,39 @@ public class StudentEditorActivity extends AppCompatActivity {
         });
     }
 
-    /** Sends the create/update to the server; Room is updated from the server's reply. */
+    /**
+     * Saves the change on this phone first (Room transaction with its pending operation),
+     * then WorkManager sends it when online. Works the same with or without a connection.
+     */
     private void send(String name, String number, String program, String group) {
         saving = true;
         btnEditorSave.setEnabled(false);
 
-        SyncManager.Callback done = (ok, msg) -> {
+        OutboxRepository.Callback done = (ok, msg) -> {
             saving = false;
+            Toast.makeText(this, msg, ok ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();
             if (ok) {
-                Toast.makeText(this, R.string.toast_student_saved, Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 btnEditorSave.setEnabled(true);
-                Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             }
         };
 
-        SyncManager sync = new SyncManager(this);
+        OutboxRepository outbox = new OutboxRepository(this);
         if (editing != null) {
-            sync.updateStudent(editing, name, number, program, group, done);
+            outbox.enqueueUpdate(editing.studentId, name, number, program, group, done);
         } else {
-            sync.createStudent(name, number, program, group, done);
+            outbox.enqueueCreate(name, number, program, group, done);
+        }
+    }
+
+    /** The proposed values of a change not yet accepted by the server, or null. */
+    private static com.google.gson.JsonObject pendingValues(StudentEntity s) {
+        if (s.pendingJson == null) return null;
+        try {
+            return com.google.gson.JsonParser.parseString(s.pendingJson).getAsJsonObject();
+        } catch (Exception e) {
+            return null;
         }
     }
 }

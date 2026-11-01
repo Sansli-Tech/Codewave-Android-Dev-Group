@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Activity E: offline changes and their sync status. -->
+<resources>
+    <string name="sync_state_saved_locally">Saved locally</string>
+    <string name="sync_state_pending">Pending</string>
+    <string name="sync_state_syncing">Syncing…</string>
+    <string name="sync_state_action_required">Action required</string>
+    <string name="sync_state_new_prefix">New · %1$s</string>
+    <string name="sync_state_edit_prefix">Edit · %1$s</string>
+    <string name="sync_state_delete_prefix">Delete · %1$s</string>
+
+    <string name="roster_menu_discard_change">Discard my change</string>
+    <string name="discard_change_title">Discard your change?</string>
+    <string name="discard_change_message">Your unsent change to this student will be removed and the details from the server kept.</string>
+    <string name="discard_change_message_with_reason">%1$s\n\nDiscard your change and keep the details from the server?</string>
+    <string name="discard_change_confirm">Discard</string>
+    <string name="discard_change_done">Change discarded</string>
+
+    <string name="sync_waiting_count">%1$d change(s) waiting to sync</string>
+    <string name="sync_action_required_count">%1$d change(s) need your attention (see the roster)</string>
+
+    <!-- Student profile (self-service) -->
+    <string name="btn_request_number_correction">Request number correction</string>
+    <string name="correction_dialog_title">Request a number correction</string>
+    <string name="correction_dialog_message">Enter the correct 9-digit student number. Your lecturer must approve it before it changes.</string>
+    <string name="correction_hint">Correct student number</string>
+    <string name="correction_send">Send request</string>
+    <string name="correction_status">Correction to %1$s: %2$s</string>
+    <string name="correction_pending">waiting for your lecturer</string>
+    <string name="correction_approved">approved</string>
+    <string name="correction_rejected">not approved</string>
+    <string name="group_request_title">Request a lab group</string>
+    <string name="group_request_none">No other groups to choose from.</string>
+    <string name="group_requested">Requested %1$s · %2$s</string>
+    <string name="group_occupancy_live">%1$s: %2$d/%3$d active students</string>
+    <string name="group_occupancy_full">%1$s: FULL (%2$d/%3$d)</string>
+    <string name="group_occupancy_offline">Occupancy shows when you\'re online</string>
+    <string name="group_unassigned">Unassigned</string>
+    <string name="err_name_length">Name must be 2–100 characters</string>
+    <string name="profile_nothing_changed">Nothing to save</string>
+    <string name="profile_discard_title">Discard your change?</string>
+    <string name="label_group_prefix">Group %1$s</string>
+    <string name="correction_same_number">That is already your student number</string>
+
+    <!-- Sharesheet group summary: group labels and counts only -->
+    <string name="share_summary_button">Share group summary</string>
+    <string name="share_summary_button_description">Share lab group totals. No student names are included.</string>
+    <string name="share_summary_chooser">Share group summary with</string>
+    <string name="share_summary_preview_title">Lab group totals (no personal data)</string>
+    <string name="share_summary_heading">MU StudentSync – lab group summary</string>
+    <string name="share_summary_as_of">As of the last sync (%1$s)</string>
+    <string name="share_summary_not_synced">Not synced yet: counts are from this phone only</string>
+    <string name="share_summary_row">%1$s: %2$d/%3$d</string>
+    <string name="share_summary_row_full">%1$s: %2$d/%3$d (FULL)</string>
+    <string name="share_summary_unassigned">Unassigned: %1$d</string>
+    <string name="share_summary_total">Total active students: %1$d</string>
+</resources>

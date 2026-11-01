@@ -134,6 +134,9 @@ public class SignInActivity extends AppCompatActivity {
         if ("lecturer".equals(role)) {
             sessionManager.saveSession(body.getToken(), role, null);
             sessionManager.saveUsername(body.getUsername());
+            sessionManager.saveAccountId(body.getAccountId());
+            // Resume any changes this lecturer saved offline before, and keep syncing in the background.
+            com.example.mustudentsync.sync.SyncScheduler.start(getApplicationContext());
             // New task: Back from the lecturer Home can't return to Sign in or the landing page.
             Intent home = new Intent(this, LecturerHomeActivity.class);
             home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -143,6 +146,9 @@ public class SignInActivity extends AppCompatActivity {
             String studentId = body.getStudentId();
             sessionManager.saveSession(body.getToken(), role, studentId);
             sessionManager.saveUsername(body.getUsername());
+            sessionManager.saveAccountId(body.getAccountId());
+            // Resume this student's queued requests and keep their profile up to date.
+            com.example.mustudentsync.sync.SyncScheduler.start(getApplicationContext());
 
             // Login no longer returns the student record, so pull it with sync first.
             setLoading(true);

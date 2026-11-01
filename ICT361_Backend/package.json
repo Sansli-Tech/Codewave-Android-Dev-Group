@@ -7,7 +7,10 @@
 "scripts": {
   "start": "node src/app.js",
   "dev": "nodemon src/app.js",
-  "test:challenge2": "node scripts/challenge2_lost_response.js"
+  "test:challenge2": "node scripts/challenge2_lost_response.js",
+  "test:challenge1": "node scripts/challenge1_last_place.js",
+  "test:roles": "node scripts/roles_test.js",
+  "db:migrate:002": "node scripts/run_sql.js db/migrations/002_correction_requests.sql"
 },
   "keywords": [],
   "author": "",

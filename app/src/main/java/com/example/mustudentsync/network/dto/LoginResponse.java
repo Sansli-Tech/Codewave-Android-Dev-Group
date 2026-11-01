@@ -16,10 +16,12 @@ public class LoginResponse {
     public String getStudentId() { return user != null ? user.studentId : null; }
 
     public String getUsername() { return user != null ? user.username : null; }
+    public String getAccountId() { return user != null ? user.accountId : null; }
 
     private static class User {
         String role;
         String studentId;
         String username;
+        String accountId;
     }
 }

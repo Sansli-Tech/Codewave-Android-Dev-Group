@@ -19,6 +19,19 @@ public class SessionManager {
     public void saveSyncCursor(long c) { prefs.edit().putLong(KEY_SYNC_CURSOR, c).apply(); }
 
     private static final String KEY_USERNAME = "username";
+    private static final String KEY_ACCOUNT_ID = "account_id";
+
+    public void saveAccountId(String accountId) { prefs.edit().putString(KEY_ACCOUNT_ID, accountId).apply(); }
+
+    /**
+     * Who owns local changes. The queue of offline changes is scoped by this value, so a
+     * different person signing in on the same phone never replays someone else's changes.
+     * Falls back to the username for sessions saved before account IDs were stored.
+     */
+    public String getAccountKey() {
+        String id = prefs.getString(KEY_ACCOUNT_ID, null);
+        return id != null ? id : getUsername();
+    }
     private static final String KEY_LAST_SYNC = "last_sync_millis";
 
     public void saveUsername(String username) { prefs.edit().putString(KEY_USERNAME, username).apply(); }

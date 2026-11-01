@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mustudentsync.data.OutboxRepository;
 import com.example.mustudentsync.data.SyncManager;
 import com.example.mustudentsync.model.StudentEntity;
 import com.example.mustudentsync.viewmodel.LecturerRosterViewModel;
@@ -275,10 +276,12 @@ public class LecturerRosterActivity extends AppCompatActivity
                 )
                 .setPositiveButton(
                         R.string.btn_confirm_delete,
+                        // Saved on this phone first; the server soft-deletes it when the
+                        // queued operation is sent (works offline too).
                         (dialog, which) ->
-                                new SyncManager(
+                                new OutboxRepository(
                                         LecturerRosterActivity.this
-                                ).deleteStudent(student, (ok, msg) -> {
+                                ).enqueueDelete(student.studentId, (ok, msg) -> {
                                     Toast.makeText(
                                             LecturerRosterActivity.this,
                                             msg,
@@ -292,6 +295,22 @@ public class LecturerRosterActivity extends AppCompatActivity
                         R.string.btn_cancel,
                         null
                 )
+                .show();
+    }
+
+    @Override
+    public void onDiscardClicked(StudentEntity student) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.discard_change_title)
+                .setMessage(student.syncMessage != null
+                        ? getString(R.string.discard_change_message_with_reason, student.syncMessage)
+                        : getString(R.string.discard_change_message))
+                .setPositiveButton(R.string.discard_change_confirm, (d, w) ->
+                        new OutboxRepository(this).discardChanges(student.studentId, (ok, msg) ->
+                                Toast.makeText(this,
+                                        ok ? getString(R.string.discard_change_done) : msg,
+                                        Toast.LENGTH_SHORT).show()))
+                .setNegativeButton(R.string.btn_cancel, null)
                 .show();
     }
 

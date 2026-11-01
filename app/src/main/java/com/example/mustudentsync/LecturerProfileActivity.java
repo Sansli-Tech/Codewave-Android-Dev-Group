@@ -49,7 +49,9 @@ public class LecturerProfileActivity extends AppCompatActivity {
         SessionManager session = new SessionManager(this);
         Handler main = new Handler(Looper.getMainLooper());
         Executors.newSingleThreadExecutor().execute(() -> {
-            AppDatabase.getInstance(getApplicationContext()).clearAllTables(); // must run off the main thread
+            // Removes the cached roster; unsent changes stay queued for this lecturer only.
+            com.example.mustudentsync.sync.SyncScheduler.stop(getApplicationContext());
+            AppDatabase.clearCachedData(getApplicationContext()); // must run off the main thread
             session.clearSession();
             main.post(() -> {
                 Intent landing = new Intent(this, LandingActivity.class);

@@ -7,9 +7,10 @@ const { mutation } = require('../idempotency');
 const router = express.Router();
 
 router.use(authenticateToken);
-router.use(requireRole('LECTURER'));
 
-// GET /api/groups — list groups and active student counts
+// GET /api/groups — list groups and active student counts.
+// Students may read this too: it holds only group codes and numbers, no names,
+// so a student can see whether a group has room before requesting a place.
 router.get('/', async (req, res) => {
   try {
     const [groups] = await pool.execute(`
@@ -39,7 +40,7 @@ router.get('/', async (req, res) => {
 // Locking the group row first makes two simultaneous requests for the last
 // place run one after the other: exactly one gets it, the other GROUP_FULL
 // (Challenge 1). A failure leaves the student's previous group untouched.
-router.post('/:groupCode/assign', mutation('Group assignment', async (req, connection) => {
+router.post('/:groupCode/assign', requireRole('LECTURER'), mutation('Group assignment', async (req, connection) => {
   const { groupCode } = req.params;
   const { student_id: studentId } = req.body || {};
 
@@ -71,7 +72,8 @@ router.post('/:groupCode/assign', mutation('Group assignment', async (req, conne
   }
 
   const [countRows] = await connection.execute(
-    'SELECT COUNT(*) AS total FROM students WHERE group_id = ? AND is_deleted = FALSE',
+    // Locking read: sees the latest committed members, never an older snapshot.
+    'SELECT COUNT(*) AS total FROM students WHERE group_id = ? AND is_deleted = FALSE LOCK IN SHARE MODE',
     [group.group_id]
   );
   const currentCount = Number(countRows[0].total);

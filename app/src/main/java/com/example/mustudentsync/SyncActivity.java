@@ -39,6 +39,28 @@ public class SyncActivity extends AppCompatActivity {
 
         btnSyncNow.setOnClickListener(v -> syncNow());
         showLastSync();
+
+        // Activity E: how many offline changes are still waiting or need attention.
+        String account = session.getAccountKey();
+        if (account != null) {
+            com.example.mustudentsync.data.local.PendingOperationDao queue =
+                    com.example.mustudentsync.data.local.AppDatabase.getInstance(this).pendingOperationDao();
+            queue.countWaiting(account).observe(this, n -> { waiting = n != null ? n : 0; showQueue(); });
+            queue.countActionRequired(account).observe(this, n -> { needAttention = n != null ? n : 0; showQueue(); });
+        }
+    }
+
+    private int waiting = 0;
+    private int needAttention = 0;
+
+    /** Shown while no sync is running: what is still waiting on this phone. */
+    private void showQueue() {
+        if (!btnSyncNow.isEnabled()) return;   // a sync is running; its result is shown instead
+        if (needAttention > 0) {
+            tvSyncStatus.setText(getString(R.string.sync_action_required_count, needAttention));
+        } else if (waiting > 0) {
+            tvSyncStatus.setText(getString(R.string.sync_waiting_count, waiting));
+        }
     }
 
     private void syncNow() {

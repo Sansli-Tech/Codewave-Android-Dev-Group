@@ -71,5 +71,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata:2.7.0"
 
     implementation "com.squareup.okhttp3:okhttp:4.12.0"
+
+    // WorkManager: background sync of offline changes (Activity E)
+    implementation "androidx.work:work-runtime:2.9.1"
     testImplementation "androidx.arch.core:core-testing:2.2.0"
 }

@@ -7,6 +7,7 @@ const { authenticateToken, requireRole } = require('../middleware/auth');
 const { mutation } = require('../idempotency');
 
 const router = express.Router();
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 router.use(authenticateToken);
 
 function validateStudent(body) {
@@ -92,12 +93,17 @@ async function resolveGroup(connection, groupCode, studentId) {
     };
   }
 
+  // LOCK IN SHARE MODE makes this a locking read: it always sees the latest COMMITTED
+  // rows. A plain SELECT would read the transaction's snapshot, which may have been taken
+  // before we waited for the group lock (e.g. by the programme lookup) and could still
+  // show 14 after another request already took the 15th place.
   const [countRows] = await connection.execute(
     `SELECT COUNT(*) AS total
      FROM students
      WHERE group_id = ?
        AND is_deleted = FALSE
-       AND student_id <> ?`,
+       AND student_id <> ?
+     LOCK IN SHARE MODE`,
     [groups[0].group_id, studentId || '']
   );
 
@@ -246,7 +252,13 @@ router.post('/', requireRole('LECTURER'), mutation('Student creation', async (re
     return { status: 400, body: { error: 'VALIDATION_ERROR', message: validationError } };
   }
 
-  const studentId = randomUUID();
+  // The app may send its own student_id (a UUID) for a student created offline, so later
+  // queued edits from the same phone already point at the right record.
+  const clientId = req.body.student_id;
+  if (clientId !== undefined && (typeof clientId !== 'string' || !UUID_RE.test(clientId))) {
+    return { status: 400, body: { error: 'VALIDATION_ERROR', message: 'student_id must be a UUID.' } };
+  }
+  const studentId = clientId ? clientId.toLowerCase() : randomUUID();
   const { student_name, student_number, programme_code } = req.body;
 
   const [programmes] = await connection.execute(
@@ -269,6 +281,9 @@ router.post('/', requireRole('LECTURER'), mutation('Student creation', async (re
     );
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
+      if (/PRIMARY/.test(error.sqlMessage || '')) {
+        return { status: 409, body: { error: 'DUPLICATE_STUDENT_ID', message: 'That student_id already exists.' } };
+      }
       return {
         status: 409,
         body: { error: 'DUPLICATE_STUDENT_NUMBER', message: 'This student number is already registered.' }
@@ -332,6 +347,16 @@ router.put('/:id', requireRole('LECTURER'), mutation('Student update', async (re
       status: 400,
       body: { error: 'EXPECTED_VERSION_REQUIRED', message: 'Provide the current expected_version.' }
     };
+  }
+
+  // Lock order everywhere: GROUP first, then the student row. The assign route and new
+  // students do the same, so two requests can never wait on each other (deadlock).
+  const targetGroup = req.body.group_code;
+  if (typeof targetGroup === 'string' && targetGroup.trim()) {
+    await connection.execute(
+      'SELECT group_id FROM lab_groups WHERE group_code = ? FOR UPDATE',
+      [targetGroup.trim()]
+    );
   }
 
   const [students] = await connection.execute(

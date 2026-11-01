@@ -115,7 +115,9 @@ public final class SessionTimeout {
         Context app = activity.getApplicationContext();
 
         Executors.newSingleThreadExecutor().execute(() -> {
-            AppDatabase.getInstance(app).clearAllTables(); // off the main thread
+            // Unsent changes stay queued for this account and resume at the next sign-in.
+            com.example.mustudentsync.sync.SyncScheduler.stop(app);
+            AppDatabase.clearCachedData(app); // off the main thread
             new SessionManager(app).clearSession();
             lastActive = 0;
             main.post(() -> {

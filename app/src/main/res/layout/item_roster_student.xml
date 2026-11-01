@@ -56,6 +56,25 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="G02" />
 
+        <!-- Activity E: Saved locally / Pending / Syncing / Action required. Hidden when synced. -->
+        <TextView
+            android:id="@+id/tvItemSyncState"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="4dp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/chipItemGroup"
+            app:layout_constraintEnd_toStartOf="@id/btnItemOverflow"
+            app:layout_constraintTop_toTopOf="@id/chipItemGroup"
+            app:layout_constraintBottom_toBottomOf="@id/chipItemGroup"
+            tools:text="Pending edit"
+            tools:visibility="visible" />
+
         <!-- ONE 3-dot button, centred vertically on the right. 48dp = recommended minimum touch target. -->
         <ImageButton
             android:id="@+id/btnItemOverflow"

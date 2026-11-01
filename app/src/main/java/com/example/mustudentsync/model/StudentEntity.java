@@ -34,7 +34,25 @@ public class StudentEntity {
     public boolean isActive = true; // false once soft-deleted
 
     @ColumnInfo(name = "record_version")
-    public int recordVersion = 1; // used later for conflict detection on sync
+    public int recordVersion = 1; // last version CONFIRMED by the server; 0 = created offline, never confirmed
+
+    // ---- Activity E: offline changes (added in Room schema version 2) ----
+    // The name/number/program/group fields above always hold the CONFIRMED values.
+    // A change made offline is kept separately in pendingJson (and in pending_operations)
+    // until the server accepts it, so confirmed data and proposals are never mixed.
+
+    /** SAVED_LOCALLY, PENDING, SYNCING, SYNCED or ACTION_REQUIRED. See SyncState. */
+    @NonNull
+    @ColumnInfo(name = "sync_state")
+    public String syncState = SyncState.SYNCED;
+
+    /** Proposed values not yet accepted by the server (JSON), or null. */
+    @ColumnInfo(name = "pending_json")
+    public String pendingJson;
+
+    /** Why the last change needs attention (conflict, group full, deleted...), or null. */
+    @ColumnInfo(name = "sync_message")
+    public String syncMessage;
 
     public StudentEntity(@NonNull String studentId, String studentNumber, String fullName,
                          String program, String labGroup) {

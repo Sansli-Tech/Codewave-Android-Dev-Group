@@ -24,6 +24,11 @@ public class MUSyncApp extends Application {
         super.onCreate();
         ThemePrefs.apply(this);
 
+        // Signed in from an earlier run: keep background sync going (Activity E).
+        if (new com.example.mustudentsync.util.SessionManager(this).isLoggedIn()) {
+            com.example.mustudentsync.sync.SyncScheduler.start(this);
+        }
+
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityStarted(@NonNull Activity activity) {

@@ -69,6 +69,21 @@
                     app:chipIcon="@android:drawable/checkbox_on_background" />
             </LinearLayout>
 
+            <!-- Why a change needs attention (conflict, group full...). Tap the chip to discard. -->
+            <TextView
+                android:id="@+id/tvProfileSyncMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/campus_warn_text"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/llChipContainer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="That group filled up before your change was sent."
+                tools:visibility="visible" />
+
             <!-- Student Name Header Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardStudentHeader"
@@ -78,7 +93,7 @@
                 android:layout_marginTop="12dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                app:layout_constraintTop_toBottomOf="@id/llChipContainer"
+                app:layout_constraintTop_toBottomOf="@id/tvProfileSyncMessage"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -106,8 +121,48 @@
                         android:textColor="?android:attr/textColorSecondary"
                         android:contentDescription="@string/label_student_id_readonly"
                         tools:text="Student ID: 001234567 (Read-only)" />
+
+                    <!-- The number can't be edited here; the lecturer approves a correction. -->
+                    <TextView
+                        android:id="@+id/tvCorrectionStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:visibility="gone"
+                        tools:text="Correction to 001234568: waiting for your lecturer"
+                        tools:visibility="visible" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRequestCorrection"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/btn_request_number_correction" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Name (editable by the student) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilProfileName"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="@string/label_full_name"
+                app:errorEnabled="true"
+                app:layout_constraintTop_toBottomOf="@id/cardStudentHeader"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etProfileName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:inputType="textPersonName|textCapWords" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Program of Study (Editable by student) -->
             <com.google.android.material.textfield.TextInputLayout
@@ -115,9 +170,9 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="4dp"
                 android:hint="@string/label_program"
-                app:layout_constraintTop_toBottomOf="@id/cardStudentHeader"
+                app:layout_constraintTop_toBottomOf="@id/tilProfileName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 

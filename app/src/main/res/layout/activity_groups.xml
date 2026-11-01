@@ -43,6 +43,17 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_campus_card"
                 android:orientation="vertical" />
+
+            <!-- Sharesheet: group labels and counts only, never names (Activity D, Unit 7). -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnShareGroupSummary"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:minHeight="48dp"
+                android:text="@string/share_summary_button"
+                android:contentDescription="@string/share_summary_button_description" />
         </LinearLayout>
     </ScrollView>
 

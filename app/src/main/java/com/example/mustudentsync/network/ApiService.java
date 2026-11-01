@@ -22,7 +22,7 @@ import retrofit2.http.Query;
 
 /**
  * Calls to the StudentSync backend (see API_CONTRACT.md).
- * Only sign-in is wired so far. Registration, roster and sync calls are added in the next steps.
+ * Lecturer writes go through the offline queue (OutboxRepository / SyncManager).
  */
 public interface ApiService {
     @HTTP(method = "DELETE", path = "students/{id}", hasBody = true)
@@ -58,6 +58,49 @@ public interface ApiService {
     /** Lab groups with capacity and live counts (lecturer only). */
     @GET("groups")
     Call<GroupListResponse> getGroups(@Header("Authorization") String bearer);
+
+    // ---- Activity E: queued offline changes ----
+    // Each one carries its operation ID in the Idempotency-Key header. A retry sends the
+    // SAME ID, so if the first reply was lost the server replays it instead of applying
+    // the change twice (Challenge 2).
+
+    @POST("students")
+    Call<okhttp3.ResponseBody> createStudentOp(@Header("Authorization") String bearer,
+                                               @Header("Idempotency-Key") String operationId,
+                                               @Body com.google.gson.JsonObject body);
+
+    @PUT("students/{id}")
+    Call<okhttp3.ResponseBody> updateStudentOp(@Header("Authorization") String bearer,
+                                               @Header("Idempotency-Key") String operationId,
+                                               @Path("id") String studentId,
+                                               @Body com.google.gson.JsonObject body);
+
+    @HTTP(method = "DELETE", path = "students/{id}", hasBody = true)
+    Call<okhttp3.ResponseBody> deleteStudentOp(@Header("Authorization") String bearer,
+                                               @Header("Idempotency-Key") String operationId,
+                                               @Path("id") String studentId,
+                                               @Body com.google.gson.JsonObject body);
+
+    // ---- Student self-service (always the signed-in student's own record) ----
+
+    /** Own profile, confirmed group with occupancy, latest number-correction request. */
+    @GET("me/student")
+    Call<okhttp3.ResponseBody> getMyProfile(@Header("Authorization") String bearer);
+
+    @PUT("me/student")
+    Call<okhttp3.ResponseBody> updateMyProfileOp(@Header("Authorization") String bearer,
+                                                 @Header("Idempotency-Key") String operationId,
+                                                 @Body com.google.gson.JsonObject body);
+
+    @POST("me/group-request")
+    Call<okhttp3.ResponseBody> groupRequestOp(@Header("Authorization") String bearer,
+                                              @Header("Idempotency-Key") String operationId,
+                                              @Body com.google.gson.JsonObject body);
+
+    @POST("me/correction-requests")
+    Call<okhttp3.ResponseBody> correctionRequestOp(@Header("Authorization") String bearer,
+                                                   @Header("Idempotency-Key") String operationId,
+                                                   @Body com.google.gson.JsonObject body);
 
     @GET("sync/changes")
     Call<SyncResponse> getChanges(@Header("Authorization") String bearer,
