@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 
 import com.example.mustudentsync.data.RoomStudentRepository;
 import com.example.mustudentsync.data.StudentRepository;
@@ -39,5 +40,9 @@ public class StudentEditorViewModel extends AndroidViewModel {
         existing.labGroup = labGroup;
         existing.recordVersion += 1;
         repository.saveStudent(existing);
+    }
+
+    public LiveData<StudentEntity> getStudent(String studentId) {
+        return repository.getStudent(studentId);
     }
 }

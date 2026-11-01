@@ -1,7 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- One Campus Blue colour scheme for every screen. The colours switch automatically
+         between values/ and values-night/, so light and dark use the same theme. -->
     <style name="Base.Theme.MUStudentSync" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/campus_primary</item>
+        <item name="colorOnPrimary">@color/campus_on_primary</item>
+        <item name="colorPrimaryContainer">@color/campus_tile</item>
+        <item name="colorOnPrimaryContainer">@color/campus_navy</item>
+        <item name="colorSecondary">@color/campus_blue</item>
+        <item name="colorSecondaryContainer">@color/campus_tile</item>
+        <item name="colorOnSecondaryContainer">@color/campus_navy</item>
+        <item name="colorSurface">@color/campus_card</item>
+        <item name="colorOnSurface">@color/campus_text</item>
+        <item name="colorOnSurfaceVariant">@color/campus_muted</item>
+        <item name="colorOutline">@color/campus_line</item>
+        <item name="colorError">@color/campus_full</item>
+        <item name="android:colorBackground">@color/campus_ground</item>
+        <item name="colorOnBackground">@color/campus_text</item>
+        <!-- Shows behind the phone status bar and navigation bar. -->
+        <item name="android:windowBackground">@color/campus_ground</item>
     </style>
 </resources>

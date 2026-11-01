@@ -3,32 +3,48 @@ package com.example.mustudentsync;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.mustudentsync.model.RegistrationDraftEntity;
+
+import com.example.mustudentsync.data.AccountManager;
 import com.example.mustudentsync.viewmodel.RegisterViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Locale;
+
+/**
+ * Student registration with a lecturer-issued claim code.
+ *
+ * The lecturer generates a one-time code for an existing student record
+ * (roster -> ⋮ -> Generate claim code). The student enters their student number,
+ * that code and a new password; the server checks the code and creates the account
+ * (POST /api/auth/claim). The student number is the username for signing in.
+ *
+ * Student number and claim code are kept as a Room draft so they survive rotation
+ * and process death. Passwords are never saved.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String KEY_NAME_ERROR = "key_name_error";
     private static final String KEY_STUDENT_NUM_ERROR = "key_student_num_error";
-    private static final String KEY_PROGRAM_ERROR = "key_program_error";
     private static final String KEY_CLAIM_ERROR = "key_claim_error";
+    private static final String KEY_PASSWORD_ERROR = "key_password_error";
+    private static final String KEY_CONFIRM_ERROR = "key_confirm_error";
 
-    private TextInputLayout tilFullName, tilStudentNumber, tilProgram, tilClaimCode;
-    private TextInputEditText etFullName, etStudentNumber, etClaimCode;
-    private AutoCompleteTextView actvProgram;
+    private TextInputLayout tilStudentNumber, tilClaimCode, tilPassword, tilConfirmPassword;
+    private TextInputEditText etStudentNumber, etClaimCode, etPassword, etConfirmPassword;
     private MaterialCardView cardOfflineDraftBanner;
-    private MaterialButton btnRegister, btnGoToSignIn;
+    private MaterialButton btnRegister, btnGoToSignIn, btnRegisterAsLecturer;
 
     private RegisterViewModel viewModel;
+    private boolean submitting = false;
+    private boolean registered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,56 +54,43 @@ public class RegisterActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
 
         initViews();
-        setupProgramDropdown();
         setupListeners();
 
         if (savedInstanceState != null) {
-            // Screen was recreated by rotation — restore inline errors.
-            tilFullName.setError(savedInstanceState.getString(KEY_NAME_ERROR));
+            // Recreated by rotation: restore inline errors (field text is restored by Android).
             tilStudentNumber.setError(savedInstanceState.getString(KEY_STUDENT_NUM_ERROR));
-            tilProgram.setError(savedInstanceState.getString(KEY_PROGRAM_ERROR));
             tilClaimCode.setError(savedInstanceState.getString(KEY_CLAIM_ERROR));
+            tilPassword.setError(savedInstanceState.getString(KEY_PASSWORD_ERROR));
+            tilConfirmPassword.setError(savedInstanceState.getString(KEY_CONFIRM_ERROR));
         } else {
-            // Fresh launch (e.g. after process death) — restore any saved draft from Room,
-            // loaded off the main thread so this never crashes the screen on open.
+            // Fresh launch (e.g. after process death): restore any saved draft from Room.
             restoreDraftIfPresent();
         }
     }
 
     private void restoreDraftIfPresent() {
         viewModel.loadDraftFromRoom(draft -> {
-            if (draft != null) {
-                etFullName.setText(draft.fullName);
+            if (draft != null && (!TextUtils.isEmpty(draft.studentNumber) || !TextUtils.isEmpty(draft.claimCode))) {
                 etStudentNumber.setText(draft.studentNumber);
-                actvProgram.setText(draft.program, false);
                 etClaimCode.setText(draft.claimCode);
-                cardOfflineDraftBanner.setVisibility(android.view.View.VISIBLE);
+                cardOfflineDraftBanner.setVisibility(View.VISIBLE);
             }
         });
     }
 
     private void initViews() {
-        tilFullName = findViewById(R.id.tilFullName);
         tilStudentNumber = findViewById(R.id.tilStudentNumber);
-        tilProgram = findViewById(R.id.tilProgram);
         tilClaimCode = findViewById(R.id.tilClaimCode);
-        etFullName = findViewById(R.id.etFullName);
+        tilPassword = findViewById(R.id.tilPassword);
+        tilConfirmPassword = findViewById(R.id.tilConfirmPassword);
         etStudentNumber = findViewById(R.id.etStudentNumber);
-        actvProgram = findViewById(R.id.actvProgram);
         etClaimCode = findViewById(R.id.etClaimCode);
+        etPassword = findViewById(R.id.etPassword);
+        etConfirmPassword = findViewById(R.id.etConfirmPassword);
         cardOfflineDraftBanner = findViewById(R.id.cardOfflineDraftBanner);
         btnRegister = findViewById(R.id.btnRegister);
         btnGoToSignIn = findViewById(R.id.btnGoToSignIn);
-    }
-
-    private void setupProgramDropdown() {
-        ProgramDropdownAdapter adapter = ProgramDropdownAdapter.create(this);
-        actvProgram.setAdapter(adapter);
-        actvProgram.setOnItemClickListener((parent, view, position, id) -> {
-            if (!adapter.isEnabled(position)) {
-                actvProgram.setText("", false); // tapping a school header clears, doesn't select it
-            }
-        });
+        btnRegisterAsLecturer = findViewById(R.id.btnRegisterAsLecturer);
     }
 
     private void setupListeners() {
@@ -96,72 +99,100 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(new Intent(this, SignInActivity.class));
             finish();
         });
+        btnRegisterAsLecturer.setOnClickListener(v -> {
+            startActivity(new Intent(this, RegisterLecturerActivity.class));
+            finish();
+        });
+    }
+
+    private static String text(TextInputEditText field) {
+        return field.getText() != null ? field.getText().toString() : "";
     }
 
     private void validateAndSubmit() {
-        tilFullName.setError(null);
+        if (submitting) return;
+
         tilStudentNumber.setError(null);
-        tilProgram.setError(null);
         tilClaimCode.setError(null);
+        tilPassword.setError(null);
+        tilConfirmPassword.setError(null);
+
+        String number = text(etStudentNumber).trim();
+        String claimCode = text(etClaimCode).trim().toUpperCase(Locale.ROOT);
+        String password = text(etPassword);
+        String confirm = text(etConfirmPassword);
 
         boolean isValid = true;
-        String name = etFullName.getText() != null ? etFullName.getText().toString().trim() : "";
-        String number = etStudentNumber.getText() != null ? etStudentNumber.getText().toString().trim() : "";
-        String program = actvProgram.getText() != null ? actvProgram.getText().toString().trim() : "";
-        String claimCode = etClaimCode.getText() != null ? etClaimCode.getText().toString().trim() : "";
-
-        if (TextUtils.isEmpty(name)) {
-            tilFullName.setError(getString(R.string.err_name_empty));
-            isValid = false;
-        }
-        if (TextUtils.isEmpty(number) || number.length() != 9 || !number.matches("\\d{9}")) {
+        if (!number.matches("\\d{9}")) {
             tilStudentNumber.setError(getString(R.string.err_student_number_invalid));
             isValid = false;
         }
-        if (TextUtils.isEmpty(program)) {
-            tilProgram.setError(getString(R.string.err_program_unselected));
+        if (!claimCode.matches("[0-9A-F]{16}")) {
+            tilClaimCode.setError(getString(R.string.err_claim_code_format));
             isValid = false;
         }
-        if (TextUtils.isEmpty(claimCode)) {
-            tilClaimCode.setError(getString(R.string.err_claim_code_invalid));
+        if (password.length() < 12) {
+            tilPassword.setError(getString(R.string.err_password_short));
             isValid = false;
         }
+        if (!password.equals(confirm)) {
+            tilConfirmPassword.setError(getString(R.string.err_password_mismatch));
+            isValid = false;
+        }
+        if (!isValid) return;
 
-        if (isValid) {
-            // TODO (Activity C/D): call the real Retrofit registration endpoint here instead.
-            String newStudentId = viewModel.registerNewStudent(name, number, program);
-            viewModel.clearDraft();
-            Intent intent = new Intent(this, StudentProfileActivity.class);
-            intent.putExtra("STUDENT_ID", newStudentId);
-            startActivity(intent);
-            finish();
-        }
+        setSubmitting(true);
+        Toast.makeText(this, R.string.msg_registering, Toast.LENGTH_SHORT).show();
+
+        new AccountManager(this).claimAccount(number, claimCode, password, (ok, message) -> {
+            if (isFinishing()) return;
+            setSubmitting(false);
+
+            if (ok) {
+                registered = true;
+                viewModel.clearDraft();
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, SignInActivity.class);
+                intent.putExtra("PREFILL_LOGIN_ID", number);
+                startActivity(intent);
+                finish();
+            } else {
+                // Show code problems on the code field; everything else as a message.
+                if (message.contains("code")) {
+                    tilClaimCode.setError(message);
+                } else if (message.contains("student number")) {
+                    tilStudentNumber.setError(message);
+                } else {
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void setSubmitting(boolean value) {
+        submitting = value;
+        btnRegister.setEnabled(!value);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Persist the in-progress form to Room so it survives process death,
-        // not just rotation. Harmless to call even with mostly-empty fields.
-        String name = etFullName.getText() != null ? etFullName.getText().toString() : "";
-        String number = etStudentNumber.getText() != null ? etStudentNumber.getText().toString() : "";
-        String program = actvProgram.getText() != null ? actvProgram.getText().toString() : "";
-        String claimCode = etClaimCode.getText() != null ? etClaimCode.getText().toString() : "";
-
-        boolean hasAnyInput = !TextUtils.isEmpty(name) || !TextUtils.isEmpty(number)
-                || !TextUtils.isEmpty(program) || !TextUtils.isEmpty(claimCode);
-
-        if (hasAnyInput) {
-            viewModel.saveDraftToRoom(name, number, program, claimCode);
+        if (registered) return;
+        // Keep the student number and claim code so they survive process death.
+        // The password is deliberately never stored.
+        String number = text(etStudentNumber);
+        String claimCode = text(etClaimCode);
+        if (!TextUtils.isEmpty(number) || !TextUtils.isEmpty(claimCode)) {
+            viewModel.saveDraftToRoom("", number, "", claimCode);
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (tilFullName.getError() != null) outState.putString(KEY_NAME_ERROR, tilFullName.getError().toString());
         if (tilStudentNumber.getError() != null) outState.putString(KEY_STUDENT_NUM_ERROR, tilStudentNumber.getError().toString());
-        if (tilProgram.getError() != null) outState.putString(KEY_PROGRAM_ERROR, tilProgram.getError().toString());
         if (tilClaimCode.getError() != null) outState.putString(KEY_CLAIM_ERROR, tilClaimCode.getError().toString());
+        if (tilPassword.getError() != null) outState.putString(KEY_PASSWORD_ERROR, tilPassword.getError().toString());
+        if (tilConfirmPassword.getError() != null) outState.putString(KEY_CONFIRM_ERROR, tilConfirmPassword.getError().toString());
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark mode versions of the Campus Blue colours. Same names as values/colors_campus.xml
+     and values/colors_theme.xml; Android picks these automatically when dark mode is on. -->
+<resources>
+    <color name="campus_navy">#9BB8F7</color>
+    <color name="campus_blue">#7EA6F4</color>
+    <color name="campus_ground">#0B1220</color>
+    <color name="campus_card">#141C2E</color>
+    <color name="campus_tile">#1E2A44</color>
+    <color name="campus_line">#26324A</color>
+    <color name="campus_text">#E6EBF5</color>
+    <color name="campus_muted">#A3AEC2</color>
+    <color name="campus_on_navy_muted">#DCE6F7</color>
+    <color name="campus_full">#F28B82</color>
+    <color name="campus_ok_bg">#123524</color>
+    <color name="campus_ok_text">#86EFAC</color>
+    <color name="campus_warn_bg">#3A2A0A</color>
+    <color name="campus_warn_text">#FCD34D</color>
+
+    <color name="campus_hero">#1B3F86</color>
+    <color name="campus_primary">#9BB8F7</color>
+    <color name="campus_on_primary">#0A1A3A</color>
+
+    <!-- Home background art (dark) -->
+    <color name="bg_line">#22304A</color>
+    <color name="bg_dot">#2C3D60</color>
+</resources>

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lecturer Home tab (Option A, Campus Blue). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/campus_ground"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    <!-- Background art (waves + network). Light and dark versions in drawable/ and drawable-night/. -->
+    <ImageView
+        android:id="@+id/imgHomeBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_campus_pattern"
+        android:importantForAccessibility="no" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Greeting + sync chip -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvGreeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/campus_muted"
+                        android:textSize="13sp"
+                        tools:text="Good evening" />
+
+                    <TextView
+                        android:id="@+id/tvUsername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/campus_text"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        tools:text="lecturer1" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/chipSyncState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_campus_chip_ok"
+                    android:drawablePadding="6dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
+                    android:text="@string/chip_synced"
+                    android:textColor="@color/campus_ok_text"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Navy summary card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_campus_hero"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_summary_label"
+                    android:textColor="@color/campus_on_navy_muted"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvStatStudents"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="—"
+                            android:textColor="@android:color/white"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_students"
+                            android:textColor="@color/campus_on_navy_muted"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvStatGroups"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="—"
+                            android:textColor="@android:color/white"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_groups"
+                            android:textColor="@color/campus_on_navy_muted"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvStatUnassigned"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="—"
+                            android:textColor="@android:color/white"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_unassigned"
+                            android:textColor="@color/campus_on_navy_muted"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Quick actions -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/home_quick_actions"
+                android:textAppearance="@style/TextAppearance.MUSync.Section"
+                android:accessibilityHeading="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/qaAddStudent"
+                    style="@style/Widget.MUSync.QuickAction"
+                    android:layout_marginEnd="5dp"
+                    android:contentDescription="@string/qa_add_student">
+
+                    <ImageView
+                        style="@style/Widget.MUSync.QuickActionIcon"
+                        android:src="@drawable/ic_add_student" />
+
+                    <TextView
+                        style="@style/Widget.MUSync.QuickActionLabel"
+                        android:text="@string/qa_add_student" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/qaClaimCode"
+                    style="@style/Widget.MUSync.QuickAction"
+                    android:layout_marginHorizontal="5dp"
+                    android:contentDescription="@string/qa_claim_code">
+
+                    <ImageView
+                        style="@style/Widget.MUSync.QuickActionIcon"
+                        android:src="@drawable/ic_key_code" />
+
+                    <TextView
+                        style="@style/Widget.MUSync.QuickActionLabel"
+                        android:text="@string/qa_claim_code" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/qaSearch"
+                    style="@style/Widget.MUSync.QuickAction"
+                    android:layout_marginHorizontal="5dp"
+                    android:contentDescription="@string/qa_search">
+
+                    <ImageView
+                        style="@style/Widget.MUSync.QuickActionIcon"
+                        android:src="@drawable/ic_search_line" />
+
+                    <TextView
+                        style="@style/Widget.MUSync.QuickActionLabel"
+                        android:text="@string/qa_search" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/qaSyncNow"
+                    style="@style/Widget.MUSync.QuickAction"
+                    android:layout_marginStart="5dp"
+                    android:contentDescription="@string/qa_sync_now">
+
+                    <ImageView
+                        style="@style/Widget.MUSync.QuickActionIcon"
+                        android:src="@drawable/ic_nav_sync" />
+
+                    <TextView
+                        style="@style/Widget.MUSync.QuickActionLabel"
+                        android:text="@string/qa_sync_now" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Groups filling up -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/home_groups_title"
+                    android:textAppearance="@style/TextAppearance.MUSync.Section"
+                    android:accessibilityHeading="true" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSeeAllGroups"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_see_all"
+                    android:textColor="@color/campus_blue" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/listHomeGroups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_campus_card"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </ScrollView>
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        style="@style/Widget.MUSync.BottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/menu_nav_lecturer" />
+</LinearLayout>

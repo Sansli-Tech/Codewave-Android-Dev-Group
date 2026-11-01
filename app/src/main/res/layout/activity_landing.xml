@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Start screen when signed out. Four panels, one per bottom-bar tab; only one is visible at a time. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/campus_ground"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Background art (waves + network). Light and dark versions in drawable/ and drawable-night/. -->
+        <ImageView
+            android:id="@+id/imgHomeBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_campus_pattern"
+            android:importantForAccessibility="no" />
+
+        <!-- HOME panel -->
+        <ScrollView
+            android:id="@+id/panelHome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_campus_hero"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_school"
+                        android:importantForAccessibility="no"
+                        app:tint="@android:color/white" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_name"
+                            android:textColor="@color/campus_text"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/landing_university"
+                            android:textColor="@color/campus_muted"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Navy hero card -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_campus_hero"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/landing_hero_title"
+                        android:textColor="@android:color/white"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:accessibilityHeading="true" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:lineSpacingMultiplier="1.2"
+                        android:text="@string/landing_hero_body"
+                        android:textColor="@color/campus_on_navy_muted"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnLandingSignIn"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:text="@string/landing_sign_in"
+                            android:textColor="@color/campus_hero"
+                            android:textStyle="bold"
+                            app:backgroundTint="@android:color/white"
+                            app:cornerRadius="12dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnLandingRegister"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/landing_register"
+                            android:textColor="@android:color/white"
+                            app:strokeColor="@color/campus_on_navy_muted"
+                            app:cornerRadius="12dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/landing_how_title"
+                    android:textAppearance="@style/TextAppearance.MUSync.Section"
+                    android:accessibilityHeading="true" />
+
+                <include
+                    android:id="@+id/step1"
+                    layout="@layout/item_landing_step" />
+
+                <include
+                    android:id="@+id/step2"
+                    layout="@layout/item_landing_step" />
+
+                <include
+                    android:id="@+id/step3"
+                    layout="@layout/item_landing_step" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- GUIDE panel -->
+        <ScrollView
+            android:id="@+id/panelGuide"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/guide_title"
+                    android:textColor="@color/campus_text"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:accessibilityHeading="true" />
+
+                <include
+                    android:id="@+id/guideStudents"
+                    layout="@layout/item_info_card" />
+
+                <include
+                    android:id="@+id/guideLecturers"
+                    layout="@layout/item_info_card" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- HELP panel -->
+        <ScrollView
+            android:id="@+id/panelHelp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/help_title"
+                    android:textColor="@color/campus_text"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:accessibilityHeading="true" />
+
+                <include
+                    android:id="@+id/helpCode"
+                    layout="@layout/item_info_card" />
+
+                <include
+                    android:id="@+id/helpOffline"
+                    layout="@layout/item_info_card" />
+
+                <include
+                    android:id="@+id/helpAccount"
+                    layout="@layout/item_info_card" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- ACCOUNT panel -->
+        <ScrollView
+            android:id="@+id/panelAccount"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/account_title"
+                    android:textColor="@color/campus_text"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:accessibilityHeading="true" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="@string/account_body"
+                    android:textColor="@color/campus_muted"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAccountSignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/landing_sign_in"
+                    android:textColor="@android:color/white"
+                    app:backgroundTint="@color/campus_hero"
+                    app:cornerRadius="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAccountRegister"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/landing_register"
+                    android:textColor="@color/campus_navy"
+                    app:strokeColor="@color/campus_navy"
+                    app:cornerRadius="12dp" />
+
+                <include
+                    android:id="@+id/themePickerLanding"
+                    layout="@layout/layout_theme_picker" />
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavLanding"
+        style="@style/Widget.MUSync.BottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/menu_nav_landing" />
+</LinearLayout>

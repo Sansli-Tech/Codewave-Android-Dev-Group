@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Landing page, bottom navigation and lecturer tab screens (Option A, Campus Blue). -->
+<resources>
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_roster">Roster</string>
+    <string name="nav_groups">Groups</string>
+    <string name="nav_sync">Sync</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_guide">Guide</string>
+    <string name="nav_help">Help</string>
+    <string name="nav_account">Account</string>
+    <string name="press_back_again">Press back again to exit</string>
+
+    <!-- Landing (signed out) -->
+    <string name="landing_university">ICT361 · Mulungushi University</string>
+    <string name="landing_hero_title">Your lab group,\nin your pocket</string>
+    <string name="landing_hero_body">Register with your claim code, see your group and keep working when the network drops.</string>
+    <string name="landing_sign_in">Sign in</string>
+    <string name="landing_register">Register</string>
+    <string name="landing_how_title">How it works</string>
+    <string name="landing_step1_title">Get a claim code</string>
+    <string name="landing_step1_body">Your lecturer issues a one-time code</string>
+    <string name="landing_step2_title">Register with your student number</string>
+    <string name="landing_step2_body">Choose a password of 12+ characters</string>
+    <string name="landing_step3_title">See your group, even offline</string>
+    <string name="landing_step3_body">Changes sync when you reconnect</string>
+
+    <string name="guide_title">Guide</string>
+    <string name="guide_students_title">For students</string>
+    <string name="guide_students_body">1. Ask your lecturer for a claim code. It works once and lasts 15 minutes.\n\n2. Tap Register and enter your 9-digit student number, the code and a password of at least 12 characters.\n\n3. Sign in with your student number and password to see your record and lab group.</string>
+    <string name="guide_lecturers_title">For lecturers</string>
+    <string name="guide_lecturers_body">Sign in with your staff account. From the Roster tab, tap ⋮ next to a student and choose Generate claim code, then give the code to the student.\n\nLab groups hold up to their set capacity. The server always has the final say, so a full group is refused even if two people save at the same moment.</string>
+
+    <string name="help_title">Help</string>
+    <string name="help_code_title">My claim code doesn\'t work</string>
+    <string name="help_code_body">Codes expire after 15 minutes and work only once. Ask your lecturer to generate a new one.</string>
+    <string name="help_offline_title">I\'m offline</string>
+    <string name="help_offline_body">You can still see the data already on your phone. Pull the latest changes from the Sync tab once you\'re back online.</string>
+    <string name="help_account_title">I forgot my password</string>
+    <string name="help_account_body">Ask your lecturer to reset your account.</string>
+
+    <string name="account_title">Account</string>
+    <string name="account_body">Sign in if you already have an account, or register with the claim code from your lecturer.</string>
+
+    <!-- Lecturer home -->
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_evening">Good evening</string>
+    <string name="chip_not_synced">Not synced</string>
+    <string name="home_summary_label">ICT361 lab registration</string>
+    <string name="home_students">Students</string>
+    <string name="home_groups">Groups</string>
+    <string name="home_unassigned">Unassigned</string>
+    <string name="home_quick_actions">Quick actions</string>
+    <string name="qa_add_student">Add student</string>
+    <string name="qa_claim_code">Claim code</string>
+    <string name="qa_search">Search</string>
+    <string name="qa_sync_now">Sync now</string>
+    <string name="home_groups_title">Groups filling up</string>
+    <string name="home_see_all">See all</string>
+    <string name="claim_code_hint">Tap ⋮ next to a student, then Generate claim code</string>
+    <string name="group_count_format">%1$d/%2$d</string>
+    <string name="group_full_format">%1$d/%2$d · Full</string>
+
+    <!-- Groups tab -->
+    <string name="groups_title">Lab groups</string>
+    <string name="groups_subtitle">Tap a group to see its students</string>
+
+    <!-- Sync tab -->
+    <string name="sync_title">Sync</string>
+    <string name="sync_last_label">Last synced</string>
+    <string name="sync_never">Not yet</string>
+    <string name="sync_students_on_phone">Students on this phone</string>
+    <string name="sync_button">Sync now</string>
+    <string name="sync_in_progress">Syncing…</string>
+    <string name="sync_done">Up to date</string>
+    <string name="sync_explainer">Sync downloads every change made on the server since your last sync. Edits you make are sent to the server straight away, and the server checks group capacity and version conflicts.</string>
+
+    <!-- Profile tab -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_username">Username</string>
+    <string name="profile_role">Role</string>
+    <string name="profile_server">Server</string>
+    <string name="profile_sign_out">Sign out</string>
+    <string name="profile_sign_out_confirm">Sign out? Data saved on this phone will be cleared.</string>
+</resources>

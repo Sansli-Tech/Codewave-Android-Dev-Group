@@ -71,12 +71,12 @@ public class ProgramDropdownAdapter extends ArrayAdapter<String> {
 
         if (headerPositions.contains(position)) {
             row.setTypeface(null, Typeface.BOLD);
-            row.setTextColor(getContext().getColor(android.R.color.darker_gray));
+            row.setTextColor(getContext().getColor(R.color.campus_muted)); // school header
             row.setClickable(false);
             row.setPadding(24, 28, 32, 8);
         } else {
             row.setTypeface(null, Typeface.NORMAL);
-            row.setTextColor(getContext().getColor(android.R.color.black));
+            row.setTextColor(getContext().getColor(R.color.campus_text)); // readable in light and dark mode
             row.setPadding(56, 24, 32, 24); // indent under its header
         }
 
@@ -94,6 +94,8 @@ public class ProgramDropdownAdapter extends ArrayAdapter<String> {
         addSchool(items, headers, "School of Engineering and Technology", new String[]{
                 "Computer Science",
                 "Information Technology",
+                "Data Science",
+                "ICT with Education",
                 "Civil Engineering",
                 "Mechanical Engineering",
                 "Electrical and Electronics Engineering",
@@ -133,7 +135,8 @@ public class ProgramDropdownAdapter extends ArrayAdapter<String> {
         java.util.List<String> items = new ArrayList<>();
         java.util.Set<Integer> headers = new HashSet<>();
         addSchool(items, headers, "School of Engineering and Technology", new String[]{
-                "Computer Science", "Information Technology", "Civil Engineering",
+                "Computer Science", "Information Technology", "Data Science",
+                "ICT with Education", "Civil Engineering",
                 "Mechanical Engineering", "Electrical and Electronics Engineering",
                 "Agricultural Engineering", "Water Engineering", "Industrial Engineering",
                 "Geomatics Engineering"

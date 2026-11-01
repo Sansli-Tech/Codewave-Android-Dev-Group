@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The white bottom bar used on the landing page and every lecturer tab. -->
+    <style name="Widget.MUSync.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/campus_card</item>
+        <item name="itemIconTint">@color/nav_item_color</item>
+        <item name="itemTextColor">@color/nav_item_color</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.MUSync.BottomNav.Indicator</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <style name="Widget.MUSync.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/campus_tile</item>
+    </style>
+
+    <!-- Section heading, e.g. "Quick actions". -->
+    <style name="TextAppearance.MUSync.Section" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/campus_text</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Square tile used for the quick-action buttons. -->
+    <style name="Widget.MUSync.QuickAction" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:background">@drawable/bg_campus_card</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.MUSync.QuickActionIcon" parent="">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:background">@drawable/bg_campus_tile</item>
+        <item name="tint">@color/campus_navy</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="Widget.MUSync.QuickActionLabel" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/campus_text</item>
+    </style>
+</resources>

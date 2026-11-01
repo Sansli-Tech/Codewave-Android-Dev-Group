@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Appearance (light / dark mode) setting. -->
+<resources>
+    <string name="appearance_title">Appearance</string>
+    <string name="appearance_hint">Phone follows your phone\'s dark mode setting.</string>
+    <string name="theme_system">Phone</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="session_expired">You were signed out after 30 minutes of inactivity. Log in again.</string>
+</resources>

@@ -42,4 +42,19 @@ public interface StudentDao {
 
     @Query("SELECT COUNT(*) FROM students WHERE lab_group = :group AND is_active = 1")
     int countActiveInGroup(String group); // enforces the 15-member cap locally, server enforces it authoritatively
+
+    @Query("SELECT * FROM students WHERE student_id = :id LIMIT 1")
+    StudentEntity findByIdNow(String id);
+
+
+    /** Active students per lab group (including "Unassigned"), for the Home and Groups tabs. */
+    @Query("SELECT lab_group AS labGroup, COUNT(*) AS total FROM students WHERE is_active = 1 GROUP BY lab_group")
+    LiveData<List<GroupCount>> getGroupCounts();
+
+    /** Number of active students stored on this phone. */
+    @Query("SELECT COUNT(*) FROM students WHERE is_active = 1")
+    LiveData<Integer> countActive();
+
+    @Query("DELETE FROM students WHERE student_id = :id")
+    void deleteById(String id);
 }

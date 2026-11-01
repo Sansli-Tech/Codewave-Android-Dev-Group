@@ -196,6 +196,24 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Sign out: clears the session and this phone's copy of the data -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStudentSignOut"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:text="@string/profile_sign_out"
+                android:textColor="@color/campus_full"
+                app:strokeColor="@color/campus_full"
+                app:icon="@drawable/ic_sign_out"
+                app:iconTint="@color/campus_full"
+                app:iconGravity="textStart"
+                app:layout_constraintTop_toBottomOf="@id/cardGroupStatus"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

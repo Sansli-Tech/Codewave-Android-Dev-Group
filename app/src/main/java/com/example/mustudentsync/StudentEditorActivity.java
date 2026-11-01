@@ -8,14 +8,26 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.example.mustudentsync.data.SyncManager;
+import com.example.mustudentsync.model.StudentEntity;
+import com.example.mustudentsync.util.GroupCatalog;
+import com.example.mustudentsync.util.ProgrammeCatalog;
 import com.example.mustudentsync.viewmodel.StudentEditorViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StudentEditorActivity extends AppCompatActivity {
+
+    private static final String UNASSIGNED = "Unassigned";
 
     private TextInputLayout tilEditorName, tilEditorNumber, tilEditorProgram;
     private TextInputEditText etEditorName, etEditorNumber;
@@ -24,9 +36,13 @@ public class StudentEditorActivity extends AppCompatActivity {
     private TextView tvGroupFullIndicator;
     private MaterialButton btnEditorSave, btnEditorCancel;
 
-    private static final String[] GROUPS = new String[]{"Unassigned", "G01", "G02", "G03", "G04"};
+    // "Unassigned" followed by every group code (G01–G14), from GroupCatalog.
+    private final List<String> groups = new ArrayList<>();
 
     private StudentEditorViewModel viewModel;
+
+    private StudentEntity editing;   // null when adding a new student
+    private boolean saving = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +54,19 @@ public class StudentEditorActivity extends AppCompatActivity {
         initViews();
         setupDropdowns();
         setupListeners();
+
+        String editId = getIntent().getStringExtra("STUDENT_ID");
+        if (getIntent().getBooleanExtra("IS_EDIT_MODE", false) && editId != null) {
+            viewModel.getStudent(editId).observe(this, s -> {
+                if (s == null || editing != null) return;
+                editing = s;
+                etEditorName.setText(s.fullName);
+                etEditorNumber.setText(s.studentNumber);
+                actvEditorProgram.setText(s.program, false);
+                int index = groups.indexOf(s.labGroup);
+                spnEditorGroup.setSelection(index >= 0 ? index : 0);
+            });
+        }
     }
 
     private void initViews() {
@@ -62,20 +91,45 @@ public class StudentEditorActivity extends AppCompatActivity {
             }
         });
 
-        spnEditorGroup.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, GROUPS));
+        groups.clear();
+        groups.add(UNASSIGNED);
+        groups.addAll(GroupCatalog.codes(this));
+        spnEditorGroup.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, groups));
 
+        // Selecting a group only checks whether it is full. Saving happens on the Save button.
         spnEditorGroup.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedGroup = GROUPS[position];
-                btnEditorSave.setEnabled(false); // disable while checking, re-enabled by the callback
-                viewModel.isGroupFull(selectedGroup, isFull -> {
-                    tvGroupFullIndicator.setVisibility(isFull ? View.VISIBLE : View.GONE);
-                    btnEditorSave.setEnabled(!isFull);
-                });
+                checkGroupCapacity(groups.get(position));
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
+    }
+
+    /** Shows the FULL warning and blocks Save if the chosen group has no free place. */
+    private void checkGroupCapacity(String group) {
+        if (isCurrentGroup(group) || UNASSIGNED.equals(group)) {
+            showGroupFull(false, group);
+            return;
+        }
+        btnEditorSave.setEnabled(false); // while checking
+        viewModel.isGroupFull(group, isFull -> showGroupFull(isFull, group));
+    }
+
+    private void showGroupFull(boolean full, String group) {
+        if (full) {
+            int cap = GroupCatalog.capacityFor(this, group);
+            tvGroupFullIndicator.setText(getString(R.string.group_full_warning, cap, cap));
+        }
+        tvGroupFullIndicator.setVisibility(full ? View.VISIBLE : View.GONE);
+        btnEditorSave.setEnabled(!full && !saving);
+    }
+
+    /** A student staying in the group they are already in never counts against capacity. */
+    private boolean isCurrentGroup(String group) {
+        return editing != null && group.equals(editing.labGroup);
     }
 
     private void setupListeners() {
@@ -87,35 +141,65 @@ public class StudentEditorActivity extends AppCompatActivity {
         String name = etEditorName.getText() != null ? etEditorName.getText().toString().trim() : "";
         String number = etEditorNumber.getText() != null ? etEditorNumber.getText().toString().trim() : "";
         String program = actvEditorProgram.getText() != null ? actvEditorProgram.getText().toString().trim() : "";
-        String group = spnEditorGroup.getSelectedItem().toString();
+        String group = spnEditorGroup.getSelectedItem() != null
+                ? spnEditorGroup.getSelectedItem().toString() : UNASSIGNED;
+
+        tilEditorName.setError(null);
+        tilEditorNumber.setError(null);
+        tilEditorProgram.setError(null);
 
         boolean valid = true;
         if (TextUtils.isEmpty(name)) {
             tilEditorName.setError(getString(R.string.err_name_empty));
             valid = false;
         }
-        if (TextUtils.isEmpty(number) || number.length() != 9) {
+        if (!number.matches("\\d{9}")) {
             tilEditorNumber.setError(getString(R.string.err_student_number_invalid));
             valid = false;
         }
-        if (TextUtils.isEmpty(program)) {
+        if (TextUtils.isEmpty(program) || ProgrammeCatalog.codeFor(program) == null) {
             tilEditorProgram.setError(getString(R.string.err_program_unselected));
             valid = false;
         }
-
         if (!valid) return;
 
-        // Re-check capacity at the moment of saving (off the main thread), in case
-        // the group filled up between selection and tapping Save.
+        if (isCurrentGroup(group) || UNASSIGNED.equals(group)) {
+            send(name, number, program, group);
+            return;
+        }
+        // Re-check at the moment of saving, in case the group filled up since it was picked.
+        // The server checks again inside a transaction and has the final say (GROUP_FULL).
+        btnEditorSave.setEnabled(false);
         viewModel.isGroupFull(group, isFull -> {
             if (isFull) {
-                tvGroupFullIndicator.setVisibility(View.VISIBLE);
-                return;
+                showGroupFull(true, group);
+            } else {
+                send(name, number, program, group);
             }
-            // TODO (Activity C/D): branch between saveNewStudent and updateExistingStudent
-            // based on the IS_EDIT_MODE intent extra once a real "edit" flow exists.
-            viewModel.saveNewStudent(name, number, program, group);
-            finish();
         });
+    }
+
+    /** Sends the create/update to the server; Room is updated from the server's reply. */
+    private void send(String name, String number, String program, String group) {
+        saving = true;
+        btnEditorSave.setEnabled(false);
+
+        SyncManager.Callback done = (ok, msg) -> {
+            saving = false;
+            if (ok) {
+                Toast.makeText(this, R.string.toast_student_saved, Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                btnEditorSave.setEnabled(true);
+                Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        SyncManager sync = new SyncManager(this);
+        if (editing != null) {
+            sync.updateStudent(editing, name, number, program, group, done);
+        } else {
+            sync.createStudent(name, number, program, group, done);
+        }
     }
 }

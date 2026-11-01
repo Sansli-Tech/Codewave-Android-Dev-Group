@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.mustudentsync.model.RegistrationDraftEntity;
 import com.example.mustudentsync.model.StudentEntity;
+import com.example.mustudentsync.util.GroupConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class FakeStudentRepository implements StudentRepository {
         for (StudentEntity s : students.values()) {
             if (s.isActive && labGroup.equals(s.labGroup)) count++;
         }
-        callback.onResult(count >= 15);
+        callback.onResult(count >= GroupConfig.MAX_PER_GROUP);
     }
 
     @Override

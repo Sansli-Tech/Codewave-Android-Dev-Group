@@ -11,6 +11,8 @@ import com.example.mustudentsync.data.local.DraftDao;
 import com.example.mustudentsync.data.local.StudentDao;
 import com.example.mustudentsync.model.RegistrationDraftEntity;
 import com.example.mustudentsync.model.StudentEntity;
+import com.example.mustudentsync.util.GroupConfig;
+import com.example.mustudentsync.util.GroupCatalog;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,8 +25,10 @@ public class RoomStudentRepository implements StudentRepository {
     private final DraftDao draftDao;
     private final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Context appContext;
 
     public RoomStudentRepository(Context context) {
+        appContext = context.getApplicationContext();
         AppDatabase db = AppDatabase.getInstance(context);
         this.studentDao = db.studentDao();
         this.draftDao = db.draftDao();
@@ -36,6 +40,16 @@ public class RoomStudentRepository implements StudentRepository {
         String safeProgram = program == null ? "All Programs" : program;
         String safeGroup = group == null ? "All Groups" : group;
         return studentDao.searchAndFilter(safeQuery, safeProgram, safeGroup);
+    }
+
+    /** Active students per lab group, for the Home and Groups tabs. */
+    public LiveData<List<com.example.mustudentsync.data.local.GroupCount>> getGroupCounts() {
+        return studentDao.getGroupCounts();
+    }
+
+    /** Active students stored on this phone. */
+    public LiveData<Integer> countActive() {
+        return studentDao.countActive();
     }
 
     @Override
@@ -50,7 +64,9 @@ public class RoomStudentRepository implements StudentRepository {
             return;
         }
         backgroundExecutor.execute(() -> {
-            boolean full = studentDao.countActiveInGroup(labGroup) >= 15;
+            // Each group's own capacity (15, or 16 for the larger groups).
+            boolean full = studentDao.countActiveInGroup(labGroup)
+                    >= GroupCatalog.capacityFor(appContext, labGroup);
             mainThreadHandler.post(() -> callback.onResult(full));
         });
     }

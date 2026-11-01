@@ -26,6 +26,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_profile);
+        com.example.mustudentsync.util.BackToExit.install(this); // Back twice to exit, not by accident
 
         viewModel = new ViewModelProvider(this).get(StudentProfileViewModel.class);
         viewModel.setStudentId(getIntent().getStringExtra("STUDENT_ID"));
@@ -34,9 +35,35 @@ public class StudentProfileActivity extends AppCompatActivity {
         setupProgramDropdown();
         setupActions();
 
+        findViewById(R.id.btnStudentSignOut).setOnClickListener(v ->
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setMessage(R.string.profile_sign_out_confirm)
+                        .setPositiveButton(R.string.profile_sign_out, (d, w) -> signOut())
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show());
+
         // Loads the real just-registered student if an id was passed in,
         // otherwise seeds/shows the fictitious demo student.
         viewModel.loadProfile(this::observeProfile);
+    }
+
+    /** Clears the session and the local Room copy, then returns to the landing page. */
+    private void signOut() {
+        com.example.mustudentsync.util.SessionManager session =
+                new com.example.mustudentsync.util.SessionManager(this);
+        android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+        java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> {
+            com.example.mustudentsync.data.local.AppDatabase
+                    .getInstance(getApplicationContext()).clearAllTables(); // off the main thread
+            session.clearSession();
+            main.post(() -> {
+                android.content.Intent landing = new android.content.Intent(this, LandingActivity.class);
+                landing.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                        | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(landing);
+                finish();
+            });
+        });
     }
 
     private void initViews() {

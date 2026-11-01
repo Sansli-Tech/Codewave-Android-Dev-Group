@@ -4,7 +4,7 @@
 
     <!-- Screen 1: Register -->
     <string name="title_register">Create Account</string>
-    <string name="desc_register_subtitle">Enter your student credentials to register</string>
+    <string name="desc_register_subtitle">Enter your student number and the claim code from your lecturer, then choose a password. You\'ll sign in with your student number.</string>
     <string name="label_full_name">Full Name</string>
     <string name="hint_full_name">e.g. Jane Doe</string>
     <string name="label_student_number">Student Number (9 digits)</string>
@@ -12,7 +12,15 @@
     <string name="label_program">Program of Study</string>
     <string name="hint_program">Select Program</string>
     <string name="label_claim_code">Student Claim Code</string>
-    <string name="hint_claim_code">e.g. LAB-2025-X</string>
+    <string name="hint_claim_code">e.g. 3FA91C0B7D2E8854</string>
+    <string name="helper_claim_code">16 characters from your lecturer. Valid for 15 minutes.</string>
+    <string name="label_new_password">Create Password</string>
+    <string name="label_confirm_password">Confirm Password</string>
+    <string name="helper_password">At least 12 characters</string>
+    <string name="err_claim_code_format">Enter the 16-character code (0–9, A–F)</string>
+    <string name="err_password_short">Password must be at least 12 characters</string>
+    <string name="err_password_mismatch">Passwords don\'t match</string>
+    <string name="msg_registering">Creating your account…</string>
     <string name="btn_register">Register</string>
     <string name="link_to_login">Already have an account? Sign in</string>
     <string name="err_name_empty">Full name is required</string>
@@ -61,7 +69,9 @@
 
     <!-- Screen 5: Student Editor -->
     <string name="btn_save_student">Save Student</string>
-    <string name="group_full_warning">(FULL - 15/15)</string>
+    <!-- %1$d = active students, %2$d = capacity -->
+    <string name="group_full_warning">(FULL - %1$d/%2$d)</string>
+    <string name="toast_student_saved">Student saved</string>
 
     <!-- Component 6: Sync/Status Banner -->
     <string name="banner_offline_mode">Offline — showing cached results</string>

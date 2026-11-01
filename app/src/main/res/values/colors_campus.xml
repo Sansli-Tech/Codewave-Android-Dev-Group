@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Option A "Campus Blue" palette. Used by the landing page and the lecturer screens. -->
+<resources>
+    <color name="campus_navy">#0B3D91</color>
+    <color name="campus_blue">#1F5FD1</color>
+    <color name="campus_ground">#F3F6FB</color>
+    <color name="campus_card">#FFFFFF</color>
+    <color name="campus_tile">#E5EDFB</color>
+    <color name="campus_line">#E2E8F0</color>
+    <color name="campus_text">#0F172A</color>
+    <color name="campus_muted">#475569</color>
+    <color name="campus_on_navy_muted">#DCE6F7</color>
+    <color name="campus_full">#B42318</color>
+    <color name="campus_ok_bg">#DCFCE7</color>
+    <color name="campus_ok_text">#166534</color>
+    <color name="campus_warn_bg">#FEF3C7</color>
+    <color name="campus_warn_text">#92400E</color>
+</resources>

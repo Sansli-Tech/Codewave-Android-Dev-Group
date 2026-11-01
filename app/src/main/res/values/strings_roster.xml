@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Roster 3-dot menu strings, in their own file so your existing strings.xml is untouched. -->
+<resources>
+    <string name="roster_menu_edit">Edit student</string>
+    <string name="roster_menu_delete">Delete student</string>
+    <string name="roster_more_options">More options</string>
+    <string name="roster_more_options_for">More options for %1$s</string>
+    <string name="roster_menu_claim_code">Generate claim code</string>
+    <string name="claim_dialog_title">Claim code for %1$s</string>
+    <string name="claim_dialog_message">Give this code to the student. It works once and expires in 15 minutes.\n\nStudent number: %1$s</string>
+    <string name="claim_dialog_copy">Copy</string>
+    <string name="claim_dialog_done">Done</string>
+    <string name="claim_code_copied">Claim code copied</string>
+    <string name="claim_code_generating">Generating claim code…</string>
+</resources>

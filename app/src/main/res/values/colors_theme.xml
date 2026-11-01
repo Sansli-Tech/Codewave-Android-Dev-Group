@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Theme colours shared by every screen. Dark versions are in values-night/colors_campus.xml. -->
+<resources>
+    <!-- Navy used for the big cards and filled buttons (stays navy in dark mode). -->
+    <color name="campus_hero">#0B3D91</color>
+    <!-- Main accent for the app theme (buttons, switches, links on older screens). -->
+    <color name="campus_primary">#0B3D91</color>
+    <color name="campus_on_primary">#FFFFFF</color>
+    <!-- Home background art (light) -->
+    <color name="bg_wave_1">#E1EAF8</color>
+    <color name="bg_wave_2">#CFDDF4</color>
+    <color name="bg_wave_3">#BCD0F0</color>
+    <color name="bg_line">#D3E0F4</color>
+    <color name="bg_dot">#C3D4F0</color>
+</resources>
