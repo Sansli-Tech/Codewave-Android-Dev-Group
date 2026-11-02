@@ -16,6 +16,9 @@ public class StudentEditorViewModel extends AndroidViewModel {
 
     private final StudentRepository repository;
 
+    /** True once the form has been filled from the database; survives rotation. */
+    public boolean formFilled = false;
+
     public StudentEditorViewModel(@NonNull Application application) {
         super(application);
         this.repository = new RoomStudentRepository(application);
@@ -45,4 +48,4 @@ public class StudentEditorViewModel extends AndroidViewModel {
     public LiveData<StudentEntity> getStudent(String studentId) {
         return repository.getStudent(studentId);
     }
-}
+}

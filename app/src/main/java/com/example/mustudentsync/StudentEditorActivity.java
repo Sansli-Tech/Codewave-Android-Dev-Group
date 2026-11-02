@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -55,11 +56,19 @@ public class StudentEditorActivity extends AppCompatActivity {
         setupDropdowns();
         setupListeners();
 
+        // After rotation (or the app being restored) Android has already put back what the
+        // lecturer typed, so the form must NOT be filled from the database again.
+        if (savedInstanceState != null && savedInstanceState.getBoolean(KEY_FORM_FILLED)) {
+            viewModel.formFilled = true;
+        }
+
         String editId = getIntent().getStringExtra("STUDENT_ID");
         if (getIntent().getBooleanExtra("IS_EDIT_MODE", false) && editId != null) {
             viewModel.getStudent(editId).observe(this, s -> {
                 if (s == null || editing != null) return;
                 editing = s;
+                if (viewModel.formFilled) return;   // keep the unsaved text on screen
+                viewModel.formFilled = true;
                 // A change still waiting to sync is shown, so the lecturer continues from it.
                 String name = s.fullName, number = s.studentNumber, program = s.program, group = s.labGroup;
                 com.google.gson.JsonObject pending = pendingValues(s);
@@ -76,6 +85,14 @@ public class StudentEditorActivity extends AppCompatActivity {
                 spnEditorGroup.setSelection(index >= 0 ? index : 0);
             });
         }
+    }
+
+    private static final String KEY_FORM_FILLED = "form_filled";
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_FORM_FILLED, viewModel.formFilled);
     }
 
     private void initViews() {
@@ -223,4 +240,4 @@ public class StudentEditorActivity extends AppCompatActivity {
             return null;
         }
     }
-}
+}
