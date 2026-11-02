@@ -12,6 +12,12 @@ if (localPropsFile.exists()) {
 def devLecturerUser = localProps.getProperty('dev.lecturer.username', '')
 def devLecturerPass = localProps.getProperty('dev.lecturer.password', '')
 
+// Where the app finds the backend. Set api.base.url in local.properties:
+//   USB phone (adb reverse):  http://localhost:5000/api/   (the default)
+//   Hosted backend:           https://your-service.onrender.com/api/
+// The trailing slash matters. A hosted address must be https.
+def apiBaseUrl = localProps.getProperty('api.base.url', 'http://localhost:5000/api/')
+
 android {
     namespace 'com.example.mustudentsync'
     compileSdk {
@@ -26,6 +32,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "API_BASE_URL", "\"${apiBaseUrl}\""
     }
 
     buildFeatures {

@@ -9,11 +9,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    // Emulator:           http://10.0.2.2:5000/api/
-    // USB phone:          http://localhost:5000/api/   (after: adb reverse tcp:5000 tcp:5000)
-    // Hosted backend:     https://your-host/api/       (HTTPS is required for the remote backend)
-    // The trailing slash matters.
-    public static final String BASE_URL = "http://localhost:5000/api/";
+    // Set in local.properties as api.base.url (see app/build.gradle):
+    //   USB phone:       http://localhost:5000/api/   (after: adb reverse tcp:5000 tcp:5000)
+    //   Emulator:        http://10.0.2.2:5000/api/
+    //   Hosted backend:  https://your-service.onrender.com/api/   (must be https)
+    public static final String BASE_URL = com.example.mustudentsync.BuildConfig.API_BASE_URL;
 
     private static Retrofit retrofit;
 
@@ -26,11 +26,12 @@ public class RetrofitClient {
             logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
             logging.redactHeader("Authorization");
 
-            // Timeouts so a dead server shows an error in seconds instead of hanging.
+            // A free hosted server sleeps when idle and takes up to a minute to wake,
+            // so the first request is given time. A dead server still fails in about a minute.
             OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(15, TimeUnit.SECONDS)
-                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
                     .addInterceptor(logging)
                     .build();
 

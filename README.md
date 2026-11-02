@@ -61,13 +61,15 @@ npm run db:migrate:002
 | `LECTURER_REGISTRATION_CODE` | Faculty code needed to register another lecturer; leave empty to disable |
 | `TRUST_PROXY` | `true` when running behind a hosting proxy that terminates HTTPS |
 | `REQUIRE_HTTPS` | `true` to refuse plain HTTP with `426 HTTPS_REQUIRED` (the health check stays open) |
+| `DB_SSL`, `DB_CA_FILE`, `DB_CA_CERT` | Cloud MySQL only: encrypted connection checked against the provider's CA certificate |
 
 ### HTTPS
 
 On a laptop the API runs on plain HTTP and the phone reaches it through USB (`adb reverse`),
 so the traffic never leaves the cable. When the API is hosted, put it behind a host that
-provides HTTPS and set `TRUST_PROXY=true` and `REQUIRE_HTTPS=true`. Then change the app's
-base URL in `network/RetrofitClient.java` to the `https://` address.
+provides HTTPS and set `TRUST_PROXY=true` and `REQUIRE_HTTPS=true`. Then set
+`api.base.url=https://<host>/api/` in `local.properties`. Step by step for Render and Aiven:
+[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 ## 2. App setup
 
@@ -109,6 +111,7 @@ Results so far are in [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md).
 - [ER diagram](docs/ER_DIAGRAM.md)
 - [API contract](docs/API_CONTRACT.md)
 - [Architecture and sync design](docs/ARCHITECTURE.md)
+- [Hosting on Render + Aiven (HTTPS)](docs/DEPLOYMENT.md)
 - [Test evidence](docs/TEST_EVIDENCE.md)
 - [Evidence checklist (still to collect)](docs/EVIDENCE_CHECKLIST.md)
 - [Contribution log](CONTRIBUTION_LOG.md)
