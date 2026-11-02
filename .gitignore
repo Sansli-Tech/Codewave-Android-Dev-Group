@@ -16,3 +16,8 @@ local.properties
 
 app.zip
 CodeWave-Android-Dev/
+   *.apk
+   *.aab
+   *.jks
+   *.keystore
+   /app/release/
