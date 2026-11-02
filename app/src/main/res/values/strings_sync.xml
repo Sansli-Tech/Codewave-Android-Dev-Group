@@ -62,4 +62,22 @@
     <string name="roster_source_loading">Searching the server…</string>
     <string name="roster_source_cached">Offline · showing %1$d students saved on this phone. This copy may be incomplete or out of date.</string>
     <string name="roster_source_expired">Session expired · showing this phone\'s copy. Sign in again to search the server.</string>
+
+    <!-- Group management (lecturer request) -->
+    <string name="group_manage_title">Manage groups</string>
+    <string name="group_manage_subtitle">Needs a connection. The server checks every place, so groups never go over capacity.</string>
+    <string name="group_working">Working…</string>
+    <string name="group_auto_button">Auto-assign unassigned students</string>
+    <string name="group_auto_button_description">Place every student without a group into groups of up to 15. Shows a preview first.</string>
+    <string name="group_auto_title">Auto-assign students?</string>
+    <string name="group_auto_confirm">Assign</string>
+    <string name="group_new_button">New group</string>
+    <string name="group_new_button_description">Create the next lab group with 15 places.</string>
+    <string name="group_new_title">Create a new group?</string>
+    <string name="group_new_message">The next group code (for example G15) will be created with 15 places.</string>
+    <string name="group_new_confirm">Create</string>
+    <string name="group_export_button">Export groups to Excel</string>
+    <string name="group_export_button_description">Download all groups as an Excel file and share it. The file contains student names and numbers.</string>
+    <string name="group_export_subject">Lab groups (MUStudentSync)</string>
+    <string name="group_export_chooser">Share the Excel file</string>
 </resources>

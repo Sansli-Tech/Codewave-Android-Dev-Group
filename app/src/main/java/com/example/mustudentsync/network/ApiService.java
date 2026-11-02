@@ -114,6 +114,28 @@ public interface ApiService {
                                             @Query("page") int page,
                                             @Query("limit") int limit);
 
+    // ---- Lecturer: group management and Excel export ----
+    // Create and auto-assign carry an Idempotency-Key: a retry after a lost reply is replayed,
+    // never applied twice (no second G15, no student moved twice).
+
+    @POST("groups")
+    Call<okhttp3.ResponseBody> createGroupOp(@Header("Authorization") String bearer,
+                                             @Header("Idempotency-Key") String operationId,
+                                             @Body com.google.gson.JsonObject body);
+
+    @GET("groups/auto-assign/preview")
+    Call<okhttp3.ResponseBody> autoAssignPreview(@Header("Authorization") String bearer);
+
+    @POST("groups/auto-assign")
+    Call<okhttp3.ResponseBody> autoAssignOp(@Header("Authorization") String bearer,
+                                            @Header("Idempotency-Key") String operationId,
+                                            @Body com.google.gson.JsonObject body);
+
+    /** The .xlsx file itself (Summary sheet + one sheet per group). */
+    @retrofit2.http.Streaming
+    @GET("groups/export.xlsx")
+    Call<okhttp3.ResponseBody> exportGroups(@Header("Authorization") String bearer);
+
     @GET("sync/changes")
     Call<SyncResponse> getChanges(@Header("Authorization") String bearer,
                                   @Query("since") long since,

@@ -1,18 +1,29 @@
 package com.example.mustudentsync;
 
+import android.content.ClipData;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 
 import com.example.mustudentsync.data.local.GroupCount;
 import com.example.mustudentsync.util.GroupRows;
 import com.example.mustudentsync.util.LecturerNav;
 import com.example.mustudentsync.util.SessionManager;
+import com.example.mustudentsync.viewmodel.GroupAdminViewModel;
 import com.example.mustudentsync.viewmodel.GroupStatsViewModel;
+
+import java.io.File;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +31,17 @@ import java.util.List;
 /**
  * Lecturer Groups tab: every lab group with its fill level. Tap one to see its students.
  * "Share summary" sends the group labels and counts through the Android Sharesheet.
+ * Group management (lecturer request): New group, Auto-assign unassigned students
+ * (groups of up to 15) and Export to Excel (.xlsx shared through the Sharesheet).
  */
 public class GroupsActivity extends AppCompatActivity {
 
+    private static final String XLSX_MIME =
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
     private List<GroupCount> latestCounts = new ArrayList<>();
+    private LinearLayout list;
+    private GroupAdminViewModel admin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +50,7 @@ public class GroupsActivity extends AppCompatActivity {
 
         LecturerNav.setup(this, findViewById(R.id.bottomNav), R.id.nav_groups);
 
-        LinearLayout list = findViewById(R.id.listAllGroups);
+        list = findViewById(R.id.listAllGroups);
         new ViewModelProvider(this).get(GroupStatsViewModel.class)
                 .getGroupCounts()
                 .observe(this, counts -> {
@@ -41,6 +59,77 @@ public class GroupsActivity extends AppCompatActivity {
                 });
 
         findViewById(R.id.btnShareGroupSummary).setOnClickListener(v -> shareSummary());
+
+        admin = new ViewModelProvider(this).get(GroupAdminViewModel.class);
+        View newGroup = findViewById(R.id.btnNewGroup);
+        View autoAssign = findViewById(R.id.btnAutoAssign);
+        View export = findViewById(R.id.btnExportExcel);
+        View progress = findViewById(R.id.progressGroupAdmin);
+        newGroup.setOnClickListener(v -> confirmNewGroup());
+        autoAssign.setOnClickListener(v -> admin.previewAutoAssign());
+        export.setOnClickListener(v -> admin.exportToExcel());
+
+        admin.isBusy().observe(this, isBusy -> {
+            boolean b = Boolean.TRUE.equals(isBusy);
+            progress.setVisibility(b ? View.VISIBLE : View.GONE);
+            newGroup.setEnabled(!b);
+            autoAssign.setEnabled(!b);
+            export.setEnabled(!b);
+        });
+        admin.getEvents().observe(this, event -> {
+            if (event == null || !event.take()) return;
+            switch (event.kind) {
+                case PREVIEW:
+                    confirmAutoAssign(event.text);
+                    break;
+                case EXPORTED:
+                    shareExcel(event.file);
+                    break;
+                default:
+                    redrawGroups();   // a new group may have been added to the list
+                    Snackbar.make(list, event.text, Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void redrawGroups() {
+        GroupRows.render(list, GroupRows.build(this, latestCounts), this::openGroup);
+    }
+
+    private void confirmNewGroup() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.group_new_title)
+                .setMessage(R.string.group_new_message)
+                .setPositiveButton(R.string.group_new_confirm, (d, w) -> admin.createGroup())
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void confirmAutoAssign(String plan) {
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.group_auto_title)
+                .setMessage(plan)
+                .setPositiveButton(R.string.group_auto_confirm, (d, w) -> admin.autoAssign())
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        dialog.show();
+    }
+
+    /**
+     * Shares the .xlsx through the Sharesheet (WhatsApp, Gmail, Drive, Files...). The file is
+     * offered through a FileProvider content:// link with temporary read permission, so no
+     * storage permission is needed and no other app can read the app's files.
+     */
+    private void shareExcel(File file) {
+        Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
+        Intent send = new Intent(Intent.ACTION_SEND);
+        send.setType(XLSX_MIME);
+        send.putExtra(Intent.EXTRA_STREAM, uri);
+        send.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.group_export_subject));
+        send.putExtra(Intent.EXTRA_TITLE, file.getName());
+        send.setClipData(ClipData.newRawUri(file.getName(), uri));
+        send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(send, getString(R.string.group_export_chooser)));
     }
 
     /**

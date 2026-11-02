@@ -3,6 +3,7 @@ const express = require('express');
 const pool = require('../config/database');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const { mutation } = require('../idempotency');
+const planner = require('../groupPlanner');
 
 const router = express.Router();
 
@@ -128,5 +129,66 @@ router.post('/:groupCode/assign', requireRole('LECTURER'), mutation('Group assig
     }
   };
 }));
+
+// POST /api/groups
+// Lecturer: create the next group (G15, G16, ...) with capacity 15.
+// Send Idempotency-Key so a retry after a lost reply does not create a second group.
+router.post('/', requireRole('LECTURER'), mutation('Group creation', async (req, connection) => {
+  const created = await planner.createNextGroup(connection);
+  return {
+    status: 201,
+    body: { message: `Group ${created.group_code} created.`, ...created, groups: await planner.listGroups(connection) }
+  };
+}));
+
+// GET /api/groups/auto-assign/preview
+// Lecturer: what auto-assign WOULD do right now. Changes nothing.
+router.get('/auto-assign/preview', requireRole('LECTURER'), async (req, res) => {
+  try {
+    const state = await planner.readState(pool, false);
+    const result = planner.plan(state.groups, state.unassigned);
+    res.json({
+      unassigned: state.unassigned.length,
+      placements: result.placements,
+      new_groups: result.newGroups,
+      fill_limit: planner.AUTO_FILL_LIMIT
+    });
+  } catch (error) {
+    console.error('Auto-assign preview failed:', error.message);
+    res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
+// POST /api/groups/auto-assign
+// Lecturer: place every student with no group into groups of up to 15, creating groups as needed.
+// One transaction: group rows are locked first, so it cannot overfill a group even if
+// someone assigns a student at the same moment. Send Idempotency-Key: a retry replays the result.
+router.post('/auto-assign', requireRole('LECTURER'), mutation('Auto-assign', async (req, connection) => {
+  const result = await planner.autoAssign(connection);
+  return {
+    status: 200,
+    body: {
+      message: result.assigned ? `${result.assigned} students placed.` : 'There are no unassigned students.',
+      ...result,
+      groups: await planner.listGroups(connection)
+    }
+  };
+}));
+
+// GET /api/groups/export.xlsx
+// Lecturer: Excel workbook with a Summary sheet and one sheet per group (number, name, programme).
+router.get('/export.xlsx', requireRole('LECTURER'), async (req, res) => {
+  try {
+    const file = await planner.buildWorkbook(pool);
+    const day = new Date().toISOString().slice(0, 10);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="MUStudentSync-groups-${day}.xlsx"`);
+    res.setHeader('Cache-Control', 'no-store');
+    res.send(file);
+  } catch (error) {
+    console.error('Group export failed:', error.message);
+    res.status(500).json({ error: 'EXPORT_FAILED' });
+  }
+});
 
 module.exports = router;

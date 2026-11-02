@@ -44,6 +44,63 @@
                 android:background="@drawable/bg_campus_card"
                 android:orientation="vertical" />
 
+            <!-- Group management (lecturer request): new group, auto-assign, Excel export. -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/group_manage_title"
+                android:textColor="@color/campus_text"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:accessibilityHeading="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/group_manage_subtitle"
+                android:textColor="@color/campus_muted"
+                android:textSize="13sp" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressGroupAdmin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                android:contentDescription="@string/group_working" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAutoAssign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:minHeight="48dp"
+                android:text="@string/group_auto_button"
+                android:contentDescription="@string/group_auto_button_description" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNewGroup"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="48dp"
+                android:text="@string/group_new_button"
+                android:contentDescription="@string/group_new_button_description" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExportExcel"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="48dp"
+                android:text="@string/group_export_button"
+                android:contentDescription="@string/group_export_button_description" />
+
             <!-- Sharesheet: group labels and counts only, never names (Activity D, Unit 7). -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnShareGroupSummary"

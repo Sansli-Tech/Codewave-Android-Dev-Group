@@ -397,8 +397,8 @@ public class SyncManager {
      * Refreshes the cached group list (codes + capacities). Lecturer only; students get
      * 403 and keep the built-in list. A failure here never fails the sync.
      */
+    /** Both roles: students need new groups (e.g. G15) in their group-request list too. */
     private void refreshGroups(String bearer) {
-        if (!"LECTURER".equalsIgnoreCase(session.getRole())) return;
         try {
             Response<GroupListResponse> res = RetrofitClient.getApiService().getGroups(bearer).execute();
             if (res.isSuccessful() && res.body() != null) {
