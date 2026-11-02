@@ -102,6 +102,18 @@ public interface ApiService {
                                                    @Header("Idempotency-Key") String operationId,
                                                    @Body com.google.gson.JsonObject body);
 
+    /**
+     * Lecturer roster straight from the server: search + programme + group, paginated.
+     * Null filters are left out of the URL. group = a code or "UNASSIGNED".
+     */
+    @GET("students")
+    Call<okhttp3.ResponseBody> listStudents(@Header("Authorization") String bearer,
+                                            @Query("search") String search,
+                                            @Query("programme") String programmeCode,
+                                            @Query("group") String group,
+                                            @Query("page") int page,
+                                            @Query("limit") int limit);
+
     @GET("sync/changes")
     Call<SyncResponse> getChanges(@Header("Authorization") String bearer,
                                   @Query("since") long since,

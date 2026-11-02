@@ -8,7 +8,19 @@ const pool = require('./config/database');
 
 const app = express();
 
+// Hosted behind an HTTPS proxy (Render, Railway, nginx): trust it so req.secure is correct.
+if (process.env.TRUST_PROXY === 'true') app.set('trust proxy', 1);
+
 app.use(helmet());
+
+// The brief requires HTTPS for the remote backend. With REQUIRE_HTTPS=true every plain-HTTP
+// request is refused (except the health check the host uses). Leave it off on your own PC.
+app.use((req, res, next) => {
+  if (process.env.REQUIRE_HTTPS === 'true' && !req.secure && req.path !== '/api/health') {
+    return res.status(426).json({ error: 'HTTPS_REQUIRED', message: 'Use HTTPS.' });
+  }
+  next();
+});
 app.use(cors());
 app.use(express.json({ limit: '20kb' }));
 

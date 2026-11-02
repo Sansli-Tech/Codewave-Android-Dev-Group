@@ -37,7 +37,7 @@ public class LecturerRosterActivity extends AppCompatActivity
     private Spinner spnProgramFilter, spnGroupFilter;
     private RecyclerView rvRoster;
     private ProgressBar progressRoster;
-    private TextView tvEmptyRoster;
+    private TextView tvEmptyRoster, tvRosterSource;
     private FloatingActionButton fabAddStudent;
 
     private static final String[] FILTER_PROGRAMS =
@@ -106,6 +106,7 @@ public class LecturerRosterActivity extends AppCompatActivity
         rvRoster = findViewById(R.id.rvRoster);
         progressRoster = findViewById(R.id.progressRoster);
         tvEmptyRoster = findViewById(R.id.tvEmptyRoster);
+        tvRosterSource = findViewById(R.id.tvRosterSource);
         fabAddStudent = findViewById(R.id.fabAddStudent);
     }
 
@@ -192,11 +193,22 @@ public class LecturerRosterActivity extends AppCompatActivity
 
         adapter = new StudentRosterAdapter(this);
         rvRoster.setAdapter(adapter);
+
+        // Online paging: near the end of the list, ask the server for the next 20.
+        rvRoster.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0 && !recyclerView.canScrollVertically(1)) viewModel.loadMore();
+            }
+        });
     }
 
     private void observeRoster() {
-        viewModel.getRoster().observe(this, students -> {
-            progressRoster.setVisibility(View.GONE);
+        viewModel.getState().observe(this, rosterState -> {
+            java.util.List<StudentEntity> students = rosterState.students;
+            boolean loading = rosterState.source == LecturerRosterViewModel.Source.LOADING;
+            progressRoster.setVisibility(loading && students.isEmpty() ? View.VISIBLE : View.GONE);
+            tvRosterSource.setText(sourceLabel(rosterState));
 
             adapter.submitList(students);
 
@@ -357,11 +369,26 @@ public class LecturerRosterActivity extends AppCompatActivity
                 .show();
     }
 
+    /** Says where the list comes from, so cached results are never mistaken for the full roster. */
+    private String sourceLabel(LecturerRosterViewModel.RosterState s) {
+        switch (s.source) {
+            case ONLINE:
+                return getString(R.string.roster_source_online, s.students.size(), s.total);
+            case SESSION_EXPIRED:
+                return getString(R.string.roster_source_expired);
+            case CACHED:
+                return getString(R.string.roster_source_cached, s.students.size());
+            default:
+                return getString(R.string.roster_source_loading);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         new SyncManager(this).syncNow((ok, msg) -> {
+            viewModel.refresh();   // ask the server again now that local changes were sent
             if (ok) {
                 // The sync also refreshed the group list from the server.
                 loadGroupOptions();

@@ -54,4 +54,10 @@
     <string name="share_summary_row_full">%1$s: %2$d/%3$d (FULL)</string>
     <string name="share_summary_unassigned">Unassigned: %1$d</string>
     <string name="share_summary_total">Total active students: %1$d</string>
+
+    <!-- Lecturer roster: online (server, paged) or cached (this phone) -->
+    <string name="roster_source_online">Online · %1$d of %2$d students on the server</string>
+    <string name="roster_source_loading">Searching the server…</string>
+    <string name="roster_source_cached">Offline · showing %1$d students saved on this phone. This copy may be incomplete or out of date.</string>
+    <string name="roster_source_expired">Session expired · showing this phone\'s copy. Sign in again to search the server.</string>
 </resources>
