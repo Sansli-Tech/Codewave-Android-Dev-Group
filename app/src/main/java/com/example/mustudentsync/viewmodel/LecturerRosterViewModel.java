@@ -56,6 +56,8 @@ public class LecturerRosterViewModel extends AndroidViewModel {
         public Source source = Source.LOADING;
         public int total;          // online: total matches on the server
         public boolean hasMore;    // online: another page exists
+        public int shownFromServer; // online: rows that came from the server
+        public int unsyncedNew;    // online: new students on this phone, not yet on the server
     }
 
     private final StudentRepository repository;
@@ -218,7 +220,10 @@ public class LecturerRosterViewModel extends AndroidViewModel {
             for (StudentEntity e : cached) local.put(e.studentId, e);
             // Students added on this phone and not yet on the server come first.
             for (StudentEntity e : cached) {
-                if (e.recordVersion == 0) s.students.add(e);
+                if (e.recordVersion == 0) {
+                    s.students.add(e);
+                    s.unsyncedNew++;
+                }
             }
             for (StudentEntity server : online) {
                 StudentEntity mine = local.get(server.studentId);
@@ -231,6 +236,7 @@ public class LecturerRosterViewModel extends AndroidViewModel {
                 s.students.add(server);
             }
             s.total = total;
+            s.shownFromServer = online.size();
             s.hasMore = online.size() < total;
         } else {
             s.students.addAll(cached);

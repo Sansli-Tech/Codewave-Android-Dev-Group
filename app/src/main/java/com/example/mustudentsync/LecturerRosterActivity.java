@@ -373,7 +373,10 @@ public class LecturerRosterActivity extends AppCompatActivity
     private String sourceLabel(LecturerRosterViewModel.RosterState s) {
         switch (s.source) {
             case ONLINE:
-                return getString(R.string.roster_source_online, s.students.size(), s.total);
+                String label = getString(R.string.roster_source_online, s.shownFromServer, s.total);
+                return s.unsyncedNew > 0
+                        ? label + getString(R.string.roster_source_unsynced, s.unsyncedNew)
+                        : label;
             case SESSION_EXPIRED:
                 return getString(R.string.roster_source_expired);
             case CACHED:

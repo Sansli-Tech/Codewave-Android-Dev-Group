@@ -227,6 +227,10 @@ public class StudentProfileActivity extends AppCompatActivity {
             tilProfileName.setError(getString(R.string.err_name_length));
             return;   // what the student typed stays in the field
         }
+        if (!com.example.mustudentsync.util.NameRule.isValid(name)) {
+            tilProfileName.setError(getString(R.string.err_name_characters));
+            return;
+        }
         if (TextUtils.isEmpty(program) || ProgrammeCatalog.codeFor(program) == null) {
             Toast.makeText(this, R.string.err_program_unselected, Toast.LENGTH_SHORT).show();
             return;

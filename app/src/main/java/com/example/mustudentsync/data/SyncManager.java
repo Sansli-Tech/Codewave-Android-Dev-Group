@@ -175,7 +175,7 @@ public class SyncManager {
             } else {
                 needAttention++;
                 blocked.add(op.studentId);
-                refuse(op, messageFor(code, errorCode(body), op));
+                refuse(op, messageFor(code, errorCode(body), serverMessage(body), op));
             }
         }
         return needAttention;
@@ -297,7 +297,7 @@ public class SyncManager {
         });
     }
 
-    private static String messageFor(int code, String error, PendingOperationEntity op) {
+    private static String messageFor(int code, String error, String serverMessage, PendingOperationEntity op) {
         if ("VERSION_CONFLICT".equals(error)) {
             return "Someone else changed this student first. Review the current details, then edit again or discard your change.";
         }
@@ -314,7 +314,11 @@ public class SyncManager {
         if ("REQUEST_PENDING".equals(error)) return "You already have a number correction waiting for your lecturer.";
         if ("SAME_NUMBER".equals(error)) return "That is already your student number.";
         if ("FIELD_NOT_PERMITTED".equals(error)) return "Students can't change that field directly.";
-        if ("VALIDATION_ERROR".equals(error)) return "The server rejected the details. Check them and try again.";
+        if ("VALIDATION_ERROR".equals(error)) {
+            return serverMessage != null
+                    ? "The server rejected the details: " + serverMessage + " Edit them, or discard the change."
+                    : "The server rejected the details. Check them and try again.";
+        }
         if (code == 403) return "Only lecturers can make this change.";
         return "The server refused this change (" + code + (error != null ? " " + error : "") + ").";
     }
@@ -417,6 +421,16 @@ public class SyncManager {
     }
 
     /** Reads {"error": "CODE"} from a reply body, or null. */
+    /** The human "message" in an error reply, or null. */
+    private static String serverMessage(String body) {
+        try {
+            JsonElement e = JsonParser.parseString(body).getAsJsonObject().get("message");
+            return e != null && e.isJsonPrimitive() ? e.getAsString() : null;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
     private static String errorCode(String body) {
         try {
             JsonObject o = JsonParser.parseString(body).getAsJsonObject();

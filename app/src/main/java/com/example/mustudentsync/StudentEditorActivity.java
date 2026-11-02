@@ -178,6 +178,9 @@ public class StudentEditorActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(name)) {
             tilEditorName.setError(getString(R.string.err_name_empty));
             valid = false;
+        } else if (!com.example.mustudentsync.util.NameRule.isValid(name)) {
+            tilEditorName.setError(getString(R.string.err_name_characters));
+            valid = false;
         }
         if (!number.matches("\\d{9}")) {
             tilEditorNumber.setError(getString(R.string.err_student_number_invalid));

@@ -38,7 +38,7 @@
     <string name="hint_password">••••••••</string>
     <string name="btn_sign_in">Sign In</string>
     <string name="link_to_register">Don\'t have an account? Register</string>
-    <string name="err_invalid_credentials">Incorrect student number or password</string>
+    <string name="err_invalid_credentials">Incorrect username, student number or password</string>
 
     <!-- Screen 3: Student Profile -->
     <string name="title_my_group">My Group &amp; Profile</string>

@@ -37,6 +37,7 @@
     <string name="group_occupancy_offline">Occupancy shows when you\'re online</string>
     <string name="group_unassigned">Unassigned</string>
     <string name="err_name_length">Name must be 2–100 characters</string>
+    <string name="err_name_characters">Use letters only (spaces, apostrophes, full stops and hyphens are fine). No digits or symbols.</string>
     <string name="profile_nothing_changed">Nothing to save</string>
     <string name="profile_discard_title">Discard your change?</string>
     <string name="label_group_prefix">Group %1$s</string>
@@ -56,7 +57,8 @@
     <string name="share_summary_total">Total active students: %1$d</string>
 
     <!-- Lecturer roster: online (server, paged) or cached (this phone) -->
-    <string name="roster_source_online">Online · %1$d of %2$d students on the server</string>
+    <string name="roster_source_online">Online · showing %1$d of %2$d students on the server</string>
+    <string name="roster_source_unsynced"> · %1$d new on this phone, not yet on the server</string>
     <string name="roster_source_loading">Searching the server…</string>
     <string name="roster_source_cached">Offline · showing %1$d students saved on this phone. This copy may be incomplete or out of date.</string>
     <string name="roster_source_expired">Session expired · showing this phone\'s copy. Sign in again to search the server.</string>
