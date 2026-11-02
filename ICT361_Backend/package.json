@@ -15,6 +15,7 @@
   "db:seed-reference": "node scripts/run_sql.js db/seed_reference.sql",
   "db:check-capacity": "node scripts/check_capacity.js",
   "seed:lecturer": "node src/seedLecturer.js",
+  "db:check-login": "node scripts/check_login.js",
   "test:make-student": "node scripts/make_test_student.js"
 },
   "keywords": [],
