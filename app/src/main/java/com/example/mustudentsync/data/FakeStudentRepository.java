@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.mustudentsync.model.RegistrationDraftEntity;
 import com.example.mustudentsync.model.StudentEntity;
-import com.example.mustudentsync.util.GroupConfig;
+import com.example.mustudentsync.util.GroupCatalog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +22,10 @@ public class FakeStudentRepository implements StudentRepository {
     private final Map<String, StudentEntity> students = new HashMap<>();
     private final MutableLiveData<List<StudentEntity>> rosterLiveData = new MutableLiveData<>(new ArrayList<>());
     private RegistrationDraftEntity draft;
+
+    // Same rule as the real repository: each group has its own capacity,
+    // 15 by default (the brief's maximum), larger only if a test sets it.
+    private final Map<String, Integer> capacities = new HashMap<>();
 
     @Override
     public LiveData<List<StudentEntity>> getRoster(String searchQuery, String program, String group) {
@@ -43,7 +47,8 @@ public class FakeStudentRepository implements StudentRepository {
         for (StudentEntity s : students.values()) {
             if (s.isActive && labGroup.equals(s.labGroup)) count++;
         }
-        callback.onResult(count >= GroupConfig.MAX_PER_GROUP);
+        Integer cap = capacities.get(labGroup);
+        callback.onResult(count >= (cap != null ? cap : GroupCatalog.DEFAULT_CAPACITY));
     }
 
     @Override
@@ -71,6 +76,11 @@ public class FakeStudentRepository implements StudentRepository {
     @Override
     public void clearRegistrationDraft() {
         draft = null;
+    }
+
+    // Test-only helper: give one group a different capacity (like the server's 16-place groups).
+    public void setCapacity(String labGroup, int capacity) {
+        capacities.put(labGroup, capacity);
     }
 
     // Test-only helper, not part of the interface — lets a test pre-populate students directly.

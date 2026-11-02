@@ -68,6 +68,22 @@ public class StudentRepositoryTest {
     }
 
     @Test
+    public void groupWithCapacity16_isFullOnlyAt16() {
+        repository.setCapacity("G04", 16);
+        for (int i = 0; i < 15; i++) {
+            repository.seedStudent(new StudentEntity(
+                    "id-" + i, String.format("%09d", i), "Student " + i, "Computer Science", "G04"));
+        }
+        boolean[] result = new boolean[1];
+        repository.isGroupFullAsync("G04", isFull -> result[0] = isFull);
+        assertFalse("A 16-place group with 15 students still has room", result[0]);
+
+        repository.seedStudent(new StudentEntity("id-15", "000000015", "Student Last", "Computer Science", "G04"));
+        repository.isGroupFullAsync("G04", isFull -> result[0] = isFull);
+        assertTrue("A 16-place group with 16 students is full", result[0]);
+    }
+
+    @Test
     public void unassignedGroup_isNeverFull() {
         boolean[] result = new boolean[1];
         repository.isGroupFullAsync("Unassigned", isFull -> result[0] = isFull);
