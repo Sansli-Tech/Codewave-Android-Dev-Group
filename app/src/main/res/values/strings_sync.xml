@@ -216,4 +216,5 @@
     <string name="settings_help_group_body_lecturer">Groups hold at most 15 students (some older groups allow 16). On the Groups tab you can create a group, auto-assign unassigned students, delete a group (its students become Unassigned) and export everything to Excel.</string>
     <string name="settings_help_role_student">Your profile shows your details and group. You can change your name and programme yourself; a student number change must be requested and approved by a lecturer.</string>
     <string name="settings_help_role_lecturer">From the Roster tab, tap ⋮ next to a student for claim codes, password reset codes, editing and deleting. Share codes only with that student, privately.</string>
+    <string name="app_logo_description">MUStudentSync logo</string>
 </resources>

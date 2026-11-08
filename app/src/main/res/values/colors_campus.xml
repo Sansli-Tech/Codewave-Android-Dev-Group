@@ -6,9 +6,9 @@
     <color name="campus_ground">#F3F6FB</color>
     <color name="campus_card">#FFFFFF</color>
     <color name="campus_tile">#E5EDFB</color>
-    <color name="campus_line">#E2E8F0</color>
+    <color name="campus_line">#CBD5E1</color>
     <color name="campus_text">#0F172A</color>
-    <color name="campus_muted">#475569</color>
+    <color name="campus_muted">#334155</color>
     <color name="campus_on_navy_muted">#DCE6F7</color>
     <color name="campus_full">#B42318</color>
     <color name="campus_ok_bg">#DCFCE7</color>

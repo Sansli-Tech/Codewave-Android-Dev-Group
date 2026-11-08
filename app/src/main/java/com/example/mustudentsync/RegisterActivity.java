@@ -50,6 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        com.example.mustudentsync.util.FloatingLogo.start(findViewById(R.id.imgRegisterLogo));
 
         viewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
 

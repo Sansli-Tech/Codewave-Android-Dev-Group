@@ -113,6 +113,7 @@ public class RegisterLecturerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_lecturer);
+        com.example.mustudentsync.util.FloatingLogo.start(findViewById(R.id.imgRegisterLecturerLogo));
 
         initViews();
         setupDepartmentDropdown();

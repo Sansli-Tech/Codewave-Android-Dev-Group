@@ -50,6 +50,7 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        com.example.mustudentsync.util.FloatingLogo.start(findViewById(R.id.imgSignInLogo));
 
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(this);

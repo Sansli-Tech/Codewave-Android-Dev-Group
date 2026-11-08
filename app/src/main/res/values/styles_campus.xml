@@ -75,4 +75,12 @@
         <item name="android:textColor">@color/campus_blue</item>
         <item name="android:textSize">15sp</item>
     </style>
+
+    <!-- Screen titles in block letters, e.g. STUDENT LAB ROSTER (TalkBack still reads it normally) -->
+    <style name="TextAppearance.MUSync.BlockTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textColor">@color/campus_text</item>
+    </style>
 </resources>

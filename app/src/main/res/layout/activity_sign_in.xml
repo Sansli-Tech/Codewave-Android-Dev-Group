@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Sign in: everything centred (horizontally and vertically), app logo floating at the top. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollViewSignIn"
@@ -7,62 +8,66 @@
     android:fillViewport="true"
     android:background="?android:attr/colorBackground">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
         android:padding="24dp">
+
+        <!-- App logo (floats gently; still if the phone's animations are off) -->
+        <ImageView
+            android:id="@+id/imgSignInLogo"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/app_logo_description"
+            android:src="@mipmap/ic_launcher_round" />
 
         <TextView
             android:id="@+id/tvSignInTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:gravity="center"
             android:text="@string/title_sign_in"
             android:textAppearance="?attr/textAppearanceHeadlineMedium"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:textColor="@color/campus_text"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvSignInSubtitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:gravity="center"
             android:text="@string/desc_sign_in_subtitle"
             android:textAppearance="?attr/textAppearanceBodyMedium"
-            app:layout_constraintTop_toBottomOf="@id/tvSignInTitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:textColor="@color/campus_muted" />
 
         <!-- Generic Security Error Banner (protects against account enumeration) -->
         <TextView
             android:id="@+id/tvGenericError"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:padding="12dp"
             android:background="?attr/colorErrorContainer"
-            android:textColor="?attr/colorOnErrorContainer"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:visibility="gone"
+            android:gravity="center"
+            android:padding="12dp"
             android:text="@string/err_invalid_credentials"
-            app:layout_constraintTop_toBottomOf="@id/tvSignInSubtitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorOnErrorContainer"
+            android:visibility="gone"
+            android:accessibilityLiveRegion="polite" />
 
         <!-- Student Number or Email Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilLoginId"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:hint="@string/label_login_id"
-            app:errorEnabled="true"
-            app:layout_constraintTop_toBottomOf="@id/tvGenericError"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLoginId"
@@ -77,15 +82,12 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPassword"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:hint="@string/label_password"
             app:passwordToggleEnabled="true"
-            app:errorEnabled="true"
-            app:layout_constraintTop_toBottomOf="@id/tilLoginId"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
@@ -99,14 +101,11 @@
         <!-- Sign In Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSignIn"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:minHeight="48dp"
-            android:text="@string/btn_sign_in"
-            app:layout_constraintTop_toBottomOf="@id/tilPassword"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_marginTop="16dp"
+            android:minHeight="52dp"
+            android:text="@string/btn_sign_in" />
 
         <!-- Forgot password -->
         <com.google.android.material.button.MaterialButton
@@ -116,10 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:minHeight="48dp"
-            android:text="@string/link_forgot_password"
-            app:layout_constraintTop_toBottomOf="@id/btnSignIn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:text="@string/link_forgot_password" />
 
         <!-- Register Link -->
         <com.google.android.material.button.MaterialButton
@@ -127,12 +123,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
             android:minHeight="48dp"
-            android:text="@string/link_to_register"
-            app:layout_constraintTop_toBottomOf="@id/btnForgotPassword"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:text="@string/link_to_register" />
+    </LinearLayout>
 </ScrollView>

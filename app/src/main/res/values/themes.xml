@@ -16,6 +16,10 @@
         <item name="colorError">@color/campus_full</item>
         <item name="android:colorBackground">@color/campus_ground</item>
         <item name="colorOnBackground">@color/campus_text</item>
+        <!-- Strong, readable text everywhere (the colours themselves differ for light and dark) -->
+        <item name="android:textColorPrimary">@color/campus_text</item>
+        <item name="android:textColorSecondary">@color/campus_muted</item>
+        <item name="android:textColorHint">@color/campus_muted</item>
         <!-- Shows behind the phone status bar and navigation bar. -->
         <item name="android:windowBackground">@color/campus_ground</item>
     </style>
