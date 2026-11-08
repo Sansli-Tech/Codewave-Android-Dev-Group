@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Navy overlay on the campus photo, so white text on the landing hero stays readable. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="0"
+        android:startColor="#F5071A3D"
+        android:endColor="#D9071A3D" />
+</shape>
