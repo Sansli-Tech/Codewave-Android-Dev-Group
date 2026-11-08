@@ -141,6 +141,20 @@ router.post('/', requireRole('LECTURER'), mutation('Group creation', async (req,
   };
 }));
 
+// DELETE /api/groups/:groupCode   body: { confirm_students: <count the lecturer saw> }
+// Lecturer: delete a group. Its students become Unassigned (they are NOT deleted).
+// If the count no longer matches, 409 GROUP_CHANGED and nothing changes.
+router.delete('/:groupCode', requireRole('LECTURER'), mutation('Group deletion', async (req, connection) => {
+  const code = String(req.params.groupCode || '').toUpperCase();
+  const seen = req.body && req.body.confirm_students;
+  if (seen !== undefined && !Number.isInteger(seen)) {
+    return { status: 400, body: { error: 'VALIDATION_ERROR', message: 'confirm_students must be a whole number.' } };
+  }
+  const result = await planner.deleteGroup(connection, code, seen);
+  if (result.status === 200) result.body.groups = await planner.listGroups(connection);
+  return result;
+}));
+
 // GET /api/groups/auto-assign/preview
 // Lecturer: what auto-assign WOULD do right now. Changes nothing.
 router.get('/auto-assign/preview', requireRole('LECTURER'), async (req, res) => {

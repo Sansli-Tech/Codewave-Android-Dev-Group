@@ -341,8 +341,41 @@ public class LecturerRosterActivity extends AppCompatActivity
                 });
     }
 
+    @Override
+    public void onResetCodeClicked(StudentEntity student) {
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.reset_confirm_title, student.fullName))
+                .setMessage(R.string.reset_confirm_message)
+                .setPositiveButton(R.string.reset_confirm_button, (d, w) -> {
+                    Toast.makeText(this, R.string.reset_code_generating, Toast.LENGTH_SHORT).show();
+                    new com.example.mustudentsync.data.AccountManager(this)
+                            .generateResetCode(student.studentId, (ok, result) -> {
+                                if (isFinishing()) return;
+                                if (!ok) {
+                                    Toast.makeText(LecturerRosterActivity.this, result, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                showCodeDialog(getString(R.string.reset_dialog_title, student.fullName),
+                                        getString(R.string.reset_dialog_message, student.studentNumber), result,
+                                        getString(R.string.reset_share_text, result, student.studentNumber));
+                            });
+                })
+                .setNegativeButton(R.string.btn_cancel, null)
+                .show();
+    }
+
     /** Shows the code large and selectable, with a Copy button. */
     private void showClaimCodeDialog(StudentEntity student, String code) {
+        showCodeDialog(getString(R.string.claim_dialog_title, student.fullName),
+                getString(R.string.claim_dialog_message, student.studentNumber), code,
+                getString(R.string.claim_share_text, code, student.studentNumber));
+    }
+
+    /**
+     * Shows a one-time code large and selectable, with Copy and Share. Share opens the Sharesheet
+     * with a ready message; the lecturer picks the student's PRIVATE chat (never a group chat).
+     */
+    private void showCodeDialog(String title, String message, String code, String shareText) {
         TextView codeView = new TextView(this);
         codeView.setText(code);
         codeView.setTextIsSelectable(true);
@@ -354,15 +387,21 @@ public class LecturerRosterActivity extends AppCompatActivity
         codeView.setPadding(pad, pad / 2, pad, 0);
 
         new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.claim_dialog_title, student.fullName))
-                .setMessage(getString(R.string.claim_dialog_message, student.studentNumber))
+                .setTitle(title)
+                .setMessage(message)
                 .setView(codeView)
                 .setPositiveButton(R.string.claim_dialog_done, null)
+                .setNegativeButton(R.string.code_dialog_share, (d, w) -> {
+                    Intent send = new Intent(Intent.ACTION_SEND);
+                    send.setType("text/plain");
+                    send.putExtra(Intent.EXTRA_TEXT, shareText);
+                    startActivity(Intent.createChooser(send, getString(R.string.code_share_chooser)));
+                })
                 .setNeutralButton(R.string.claim_dialog_copy, (d, w) -> {
                     android.content.ClipboardManager clipboard =
                             (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     if (clipboard != null) {
-                        clipboard.setPrimaryClip(android.content.ClipData.newPlainText("Claim code", code));
+                        clipboard.setPrimaryClip(android.content.ClipData.newPlainText("Code", code));
                         Toast.makeText(this, R.string.claim_code_copied, Toast.LENGTH_SHORT).show();
                     }
                 })

@@ -24,6 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -251,6 +253,139 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Recovery e-mail: where "Forgot password?" codes are sent -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRecoveryEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutline"
+                app:layout_constraintTop_toBottomOf="@id/cardGroupStatus"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/recovery_title"
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:accessibilityHeading="true" />
+
+                    <TextView
+                        android:id="@+id/tvRecoveryHint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/recovery_hint_missing"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+                    <!-- Saved: the address as text, with Edit and Delete -->
+                    <LinearLayout
+                        android:id="@+id/groupRecoverySaved"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvRecoveryEmailValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:drawablePadding="8dp"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textIsSelectable="true"
+                            tools:text="student@example.com" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnEditRecoveryEmail"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="8dp"
+                                android:minHeight="48dp"
+                                android:text="@string/recovery_edit"
+                                android:contentDescription="@string/recovery_edit_description" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnDeleteRecoveryEmail"
+                                style="@style/Widget.MaterialComponents.Button.TextButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:minHeight="48dp"
+                                android:text="@string/recovery_delete"
+                                android:textColor="@color/campus_full"
+                                android:contentDescription="@string/recovery_delete_description" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Adding or editing -->
+                    <LinearLayout
+                        android:id="@+id/groupRecoveryEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilRecoveryEmail"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="@string/recovery_field">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etRecoveryEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textEmailAddress" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSaveRecoveryEmail"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:minHeight="48dp"
+                                android:text="@string/recovery_save" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnCancelRecoveryEmail"
+                                style="@style/Widget.MaterialComponents.Button.TextButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="8dp"
+                                android:minHeight="48dp"
+                                android:text="@string/btn_cancel"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Sign out: clears the session and this phone's copy of the data -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnStudentSignOut"
@@ -265,10 +400,18 @@
                 app:icon="@drawable/ic_sign_out"
                 app:iconTint="@color/campus_full"
                 app:iconGravity="textStart"
-                app:layout_constraintTop_toBottomOf="@id/cardGroupStatus"
+                app:layout_constraintTop_toBottomOf="@id/cardRecoveryEmail"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavStudent"
+        style="@style/Widget.MUSync.BottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/menu_nav_student" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

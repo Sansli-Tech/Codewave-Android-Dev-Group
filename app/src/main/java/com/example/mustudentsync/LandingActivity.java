@@ -81,7 +81,7 @@ public class LandingActivity extends AppCompatActivity {
         if ("lecturer".equalsIgnoreCase(session.getRole())) {
             next = new Intent(this, LecturerHomeActivity.class);
         } else if ("student".equalsIgnoreCase(session.getRole()) && session.getStudentId() != null) {
-            next = new Intent(this, StudentProfileActivity.class);
+            next = new Intent(this, StudentHomeActivity.class);
             next.putExtra("STUDENT_ID", session.getStudentId());
         } else {
             return false;

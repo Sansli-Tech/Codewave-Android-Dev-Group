@@ -54,6 +54,10 @@ app.use('/api/groups', require('./routes/groups'));
 app.use('/api/sync', require('./routes/sync'));
 app.use('/api/me', require('./routes/me'));
 app.use('/api/correction-requests', require('./routes/correctionRequests'));
+const passwordReset = require('./routes/passwordReset');
+app.use('/api/students', passwordReset.lecturerRouter);   // POST /api/students/:id/reset-code
+app.use('/api/auth', passwordReset.publicRouter);         // forgot-password, reset-with-code, lecturer-reset-password
+app.use('/api/account', passwordReset.accountRouter);     // GET/PUT /api/account/email (recovery e-mail)
 
 app.use((req, res) => {
   res.status(404).json({

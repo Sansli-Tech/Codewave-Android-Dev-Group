@@ -114,6 +114,34 @@ public interface ApiService {
                                             @Query("page") int page,
                                             @Query("limit") int limit);
 
+    // ---- Forgot password ----
+
+    /** Lecturer: one-time reset code (16 hex characters, 15 minutes) for a student's account. */
+    @POST("students/{id}/reset-code")
+    Call<okhttp3.ResponseBody> generateResetCode(@Header("Authorization") String bearer,
+                                                 @Path("id") String studentId);
+
+    /** { login }: e-mails a 6-digit code to the account's recovery e-mail. Same reply for every login. */
+    @POST("auth/forgot-password")
+    Call<okhttp3.ResponseBody> forgotPassword(@Body com.google.gson.JsonObject body);
+
+    /** { login, code, new_password }: code from the e-mail (6 digits) or from the lecturer (16 characters). */
+    @POST("auth/reset-with-code")
+    Call<okhttp3.ResponseBody> resetWithCode(@Body com.google.gson.JsonObject body);
+
+    /** The signed-in account's recovery e-mail. */
+    @GET("account/email")
+    Call<okhttp3.ResponseBody> getRecoveryEmail(@Header("Authorization") String bearer);
+
+    /** { email } (empty removes it). */
+    @PUT("account/email")
+    Call<okhttp3.ResponseBody> setRecoveryEmail(@Header("Authorization") String bearer,
+                                                @Body com.google.gson.JsonObject body);
+
+    /** Lecturer: { email, staff_id, faculty_token, new_password }. */
+    @POST("auth/lecturer-reset-password")
+    Call<okhttp3.ResponseBody> resetLecturerPassword(@Body com.google.gson.JsonObject body);
+
     // ---- Lecturer: group management and Excel export ----
     // Create and auto-assign carry an Idempotency-Key: a retry after a lost reply is replayed,
     // never applied twice (no second G15, no student moved twice).
@@ -121,6 +149,13 @@ public interface ApiService {
     @POST("groups")
     Call<okhttp3.ResponseBody> createGroupOp(@Header("Authorization") String bearer,
                                              @Header("Idempotency-Key") String operationId,
+                                             @Body com.google.gson.JsonObject body);
+
+    /** Body: { confirm_students: n }. The group's students become Unassigned; 409 GROUP_CHANGED if n is out of date. */
+    @HTTP(method = "DELETE", path = "groups/{code}", hasBody = true)
+    Call<okhttp3.ResponseBody> deleteGroupOp(@Header("Authorization") String bearer,
+                                             @Header("Idempotency-Key") String operationId,
+                                             @Path("code") String groupCode,
                                              @Body com.google.gson.JsonObject body);
 
     @GET("groups/auto-assign/preview")

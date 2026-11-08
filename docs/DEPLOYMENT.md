@@ -116,3 +116,28 @@ npm run test:challenge1 -- G08
 A free monitor such as cron-job.org can request `https://<name>.onrender.com/api/health` every 10
 minutes. That keeps the service from sleeping, and the 750 free hours cover one service for a
 whole month.
+
+## E-mail for "Forgot password?" (Brevo)
+
+Render's free plan blocks the normal mail ports (SMTP), so codes are sent through **Brevo's HTTPS
+API**, which works both on your laptop and on Render. The free plan allows 300 e-mails a day.
+
+1. Sign up at brevo.com (free).
+2. **Senders, domains & dedicated IPs → Senders → Add a sender**: use an address you can open,
+   for example a Gmail made for the app, and click the link Brevo e-mails to it.
+3. **SMTP & API → API keys → Generate a new API key**. Copy it once; don't send it to anyone.
+4. Local `.env` and Render **Environment**:
+
+   | Key | Value |
+   |---|---|
+   | `BREVO_API_KEY` | the key |
+   | `MAIL_FROM` | the verified sender address |
+   | `MAIL_FROM_NAME` | `MUStudentSync` |
+
+5. Restart the server (Render restarts by itself after you save).
+
+To test on your laptop **without** sending real e-mail, set `MAIL_DEV_LOG=true` (and leave
+`BREVO_API_KEY` empty): the code is printed in the `npm start` terminal. Never set it on Render.
+
+If e-mails don't arrive: check the spam folder, and look at the server log for
+`Reset e-mail failed: Brevo returned …`, which says what Brevo didn't accept (often an unverified sender).

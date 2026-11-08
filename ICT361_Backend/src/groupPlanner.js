@@ -117,6 +117,41 @@ async function createNextGroup(conn) {
   return { group_code: code, capacity: NEW_GROUP_CAPACITY };
 }
 
+/**
+ * Deletes a group. Must run inside a transaction.
+ * Its active students become Unassigned (version bumped + sync entry, so phones update);
+ * soft-deleted students that still point at it are detached too (the foreign key needs it).
+ * seenCount = how many students the lecturer saw in the confirmation. If someone changed the
+ * group since, nothing happens and GROUP_CHANGED is returned, so nobody is unassigned unexpectedly.
+ */
+async function deleteGroup(conn, code, seenCount) {
+  const [groups] = await conn.query(
+    'SELECT group_id, group_code FROM lab_groups WHERE group_code = ? FOR UPDATE', [code]);
+  if (!groups.length) return { status: 404, body: { error: 'GROUP_NOT_FOUND', message: `Group ${code} does not exist.` } };
+  const group = groups[0];
+
+  const [members] = await conn.query(
+    'SELECT student_id, is_deleted FROM students WHERE group_id = ? FOR UPDATE', [group.group_id]);
+  const active = members.filter((m) => !m.is_deleted).map((m) => m.student_id);
+  if (Number.isInteger(seenCount) && seenCount !== active.length) {
+    return { status: 409, body: { error: 'GROUP_CHANGED',
+      message: `${code} now has ${active.length} students, not ${seenCount}. Check again before deleting.`,
+      active_students: active.length } };
+  }
+
+  if (active.length) {
+    await conn.query(
+      'UPDATE students SET group_id = NULL, record_version = record_version + 1 WHERE student_id IN (?)', [active]);
+    const [versions] = await conn.query(
+      'SELECT student_id, record_version FROM students WHERE student_id IN (?)', [active]);
+    await conn.query('INSERT INTO sync_changes (student_id, record_version, change_type) VALUES ?',
+      [versions.map((v) => [v.student_id, v.record_version, 'UPSERT'])]);
+  }
+  await conn.query('UPDATE students SET group_id = NULL WHERE group_id = ? AND is_deleted = TRUE', [group.group_id]);
+  await conn.query('DELETE FROM lab_groups WHERE group_id = ?', [group.group_id]);
+  return { status: 200, body: { message: `Group ${code} deleted.`, group_code: code, unassigned_students: active.length } };
+}
+
 /** Places every unassigned student. Must run inside a transaction. */
 async function autoAssign(conn) {
   const state = await readState(conn, true);
@@ -190,5 +225,5 @@ async function buildWorkbook(conn) {
 
 module.exports = {
   AUTO_FILL_LIMIT, NEW_GROUP_CAPACITY,
-  nextCode, plan, listGroups, readState, createNextGroup, autoAssign, buildWorkbook
+  nextCode, plan, listGroups, readState, createNextGroup, deleteGroup, autoAssign, buildWorkbook
 };

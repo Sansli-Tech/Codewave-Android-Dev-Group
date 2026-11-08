@@ -80,4 +80,100 @@
     <string name="group_export_button_description">Download all groups as an Excel file and share it. The file contains student names and numbers.</string>
     <string name="group_export_subject">Lab groups (MUStudentSync)</string>
     <string name="group_export_chooser">Share the Excel file</string>
+    <string name="group_delete_button">Delete a group</string>
+    <string name="group_delete_button_description">Choose a group to delete. Its students become Unassigned; no student is deleted.</string>
+    <string name="group_delete_pick_title">Which group?</string>
+    <plurals name="group_delete_item">
+        <item quantity="one">%1$s (%2$d student)</item>
+        <item quantity="other">%1$s (%2$d students)</item>
+    </plurals>
+    <string name="group_delete_title">Delete %1$s?</string>
+    <string name="group_delete_empty">%1$s has no students. It will be removed from the list.</string>
+    <plurals name="group_delete_with_students">
+        <item quantity="one">%1$s has %2$d student. They will become Unassigned (not deleted), and you can auto-assign them afterwards.</item>
+        <item quantity="other">%1$s has %2$d students. They will become Unassigned (not deleted), and you can auto-assign them afterwards.</item>
+    </plurals>
+    <string name="group_delete_confirm">Delete group</string>
+
+    <!-- Forgot password -->
+    <string name="link_forgot_password">Forgot password?</string>
+    <string name="forgot_title">Reset your password</string>
+    <string name="forgot_help">Enter your student number (students) or staff e-mail (lecturers). We\'ll e-mail you a 6-digit code. Students without a recovery e-mail can ask their lecturer for a code instead.</string>
+    <string name="forgot_login">Student number or staff e-mail</string>
+    <string name="forgot_send_code">E-mail me a code</string>
+    <string name="forgot_reset_code">Code (from the e-mail or your lecturer)</string>
+    <string name="forgot_new_password">New password (at least 12 characters)</string>
+    <string name="forgot_confirm_password">Type the new password again</string>
+    <string name="forgot_submit">Change password</string>
+    <string name="forgot_back">Back to sign in</string>
+    <string name="forgot_use_faculty">Lecturer without access to your e-mail? Use the faculty code</string>
+    <string name="forgot_use_code">Use a code instead</string>
+    <string name="forgot_faculty_help">Enter your staff e-mail above, then your staff ID and the faculty code you used to register.</string>
+    <string name="forgot_staff_id">Staff ID</string>
+    <string name="forgot_faculty_code">Faculty code</string>
+    <string name="forgot_err_login">Enter your student number or staff e-mail</string>
+    <string name="forgot_err_code">Enter the 6-digit code from the e-mail, or the 16-character code from your lecturer</string>
+    <string name="forgot_err_required">Required</string>
+    <string name="forgot_err_password">At least 12 characters</string>
+    <string name="forgot_err_match">The two passwords are different</string>
+    <string name="forgot_done_title">Password changed</string>
+    <string name="recovery_title">Recovery e-mail</string>
+    <string name="recovery_hint_missing">Add an e-mail address so you can reset your password yourself if you forget it.</string>
+    <string name="recovery_hint_set">Password reset codes are sent to this address.</string>
+    <string name="recovery_field">E-mail address</string>
+    <string name="recovery_save">Save e-mail</string>
+    <string name="recovery_invalid">Enter a valid e-mail address</string>
+    <string name="recovery_hint_offline">Connect to the internet to see or change your recovery e-mail.</string>
+    <string name="recovery_edit">Edit</string>
+    <string name="recovery_delete">Delete</string>
+    <string name="recovery_edit_description">Edit recovery e-mail</string>
+    <string name="recovery_delete_description">Delete recovery e-mail</string>
+    <string name="recovery_saved_description">Recovery e-mail saved: %1$s</string>
+    <string name="recovery_delete_title">Delete recovery e-mail?</string>
+    <string name="recovery_delete_message">You won\'t be able to reset your password by e-mail until you add one again. Your lecturer can still give you a reset code.</string>
+
+    <!-- Student Home and Groups tabs -->
+    <string name="student_home_group_label">Your lab group</string>
+    <string name="student_home_no_group">Not in a group yet</string>
+    <string name="student_home_occupancy">%1$d of %2$d places taken</string>
+    <string name="student_home_unassigned_hint">Choose a group with free places on the Groups tab.</string>
+    <string name="student_home_offline">Offline: showing this phone\'s copy. Occupancy updates when you\'re online.</string>
+    <string name="student_home_group_pending">Your request for %1$s is %2$s: the server hasn\'t confirmed it yet. Saving it doesn\'t reserve a place.</string>
+    <string name="student_home_changes_pending">Your latest changes are %1$s.</string>
+    <string name="student_home_attention">Action required: %1$s Tap to review on your profile.</string>
+    <string name="student_home_add_email">Add a recovery e-mail on your profile, so you can reset your password yourself if you forget it.</string>
+    <string name="student_home_actions">What would you like to do?</string>
+    <string name="student_home_choose_group">Choose or change my group</string>
+    <string name="student_home_my_details">My details</string>
+    <string name="student_home_sync">Sync now</string>
+    <string name="student_groups_title">Lab groups</string>
+    <string name="student_groups_subtitle">Each group has at most 15 students. Tap a group with free places to ask for a place; the server confirms it.</string>
+    <string name="student_groups_mine">Your group: %1$s</string>
+    <string name="student_groups_mine_none">You are not in a group yet.</string>
+    <string name="student_groups_requested">Your request for %1$s is waiting for the server (Pending).</string>
+    <string name="student_groups_online">Live from the server</string>
+    <string name="student_groups_offline">Offline: the groups can\'t be shown right now. Try again when you\'re connected.</string>
+    <string name="student_groups_loading">Loading groups…</string>
+    <string name="student_groups_retry">Try again</string>
+    <string name="student_groups_already">You are already in %1$s.</string>
+    <string name="student_groups_wait">You already have a group request waiting. Wait for it to sync, or discard it on your profile.</string>
+    <string name="student_groups_full_title">%1$s is full</string>
+    <string name="student_groups_full_message">This group has no free places. Choose another group.</string>
+    <string name="student_groups_places_left">%1$d places left right now. </string>
+    <string name="student_groups_confirm_title">Ask for a place in %1$s?</string>
+    <string name="student_groups_confirm_message">%1$sIf you\'re offline, the request is saved and sent later. If the group fills up first, you keep your current group.</string>
+    <string name="student_groups_confirm">Ask for a place</string>
+    <string name="roster_menu_reset_code">Password reset code</string>
+    <string name="reset_confirm_title">Reset code for %1$s?</string>
+    <string name="reset_confirm_message">Only do this if the student asked you in person or through a channel you trust. The code lets them set a new password.</string>
+    <string name="reset_confirm_button">Create code</string>
+    <string name="reset_code_generating">Creating reset code…</string>
+    <string name="reset_dialog_title">Reset code for %1$s</string>
+    <string name="reset_dialog_message">The student taps "Forgot password?" on the sign-in screen and enters student number %1$s, this code and a new password. It works once and expires in 15 minutes.</string>
+
+    <!-- Sharing one-time codes privately -->
+    <string name="code_dialog_share">Share</string>
+    <string name="code_share_chooser">Send to the student privately</string>
+    <string name="claim_share_text">Your MUStudentSync claim code is %1$s. In the app tap Register, enter your student number %2$s, this code and a password of your choice. It works once and expires in 15 minutes. Do not share it.</string>
+    <string name="reset_share_text">Your MUStudentSync password reset code is %1$s. In the app tap "Forgot password?", choose Student, and enter your student number %2$s, this code and a new password. It works once and expires in 15 minutes. Do not share it.</string>
 </resources>

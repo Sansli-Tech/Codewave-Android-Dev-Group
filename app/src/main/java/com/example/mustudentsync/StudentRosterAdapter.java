@@ -22,6 +22,7 @@ public class StudentRosterAdapter extends RecyclerView.Adapter<StudentRosterAdap
         void onEditClicked(StudentEntity student);
         void onDeleteClicked(StudentEntity student);
         void onClaimCodeClicked(StudentEntity student);
+        void onResetCodeClicked(StudentEntity student);
         /** Drop this student's unsent or refused change and go back to the server's values. */
         void onDiscardClicked(StudentEntity student);
     }
@@ -118,6 +119,7 @@ public class StudentRosterAdapter extends RecyclerView.Adapter<StudentRosterAdap
         popup.getMenu().findItem(R.id.action_discard_change).setVisible(hasChange);
         // A student created offline has no server record yet, so no claim code.
         popup.getMenu().findItem(R.id.action_claim_code).setVisible(student.recordVersion > 0);
+        popup.getMenu().findItem(R.id.action_reset_code).setVisible(student.recordVersion > 0);
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
             if (id == R.id.action_edit_student) {
@@ -125,6 +127,9 @@ public class StudentRosterAdapter extends RecyclerView.Adapter<StudentRosterAdap
                 return true;
             } else if (id == R.id.action_claim_code) {
                 listener.onClaimCodeClicked(student);  // lecturer issues a one-time claim code
+                return true;
+            } else if (id == R.id.action_reset_code) {
+                listener.onResetCodeClicked(student);  // student forgot their password
                 return true;
             } else if (id == R.id.action_delete_student) {
                 listener.onDeleteClicked(student);     // was in the menu but never handled before

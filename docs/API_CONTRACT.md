@@ -53,6 +53,24 @@ retry gets the same refusal instead of a different result.
 | GET | `/me` | any | — | `200 { user }` | 401 |
 | POST | `/claim` | none | `{ student_number, claim_code, username, password }` | `201 { user }` | 400 VALIDATION_ERROR, 404 STUDENT_NOT_FOUND, 400 CLAIM_UNAVAILABLE, 400 CLAIM_EXPIRED, 400 INVALID_CLAIM_CODE, 409 ACCOUNT_EXISTS |
 | POST | `/register-lecturer` | none | `{ full_name, staff_id, email, school, department, password (12+), faculty_token }` | `201` | 400 VALIDATION_ERROR, 403 INVALID_FACULTY_TOKEN, 409 ACCOUNT_EXISTS, 429 TOO_MANY_ATTEMPTS (per IP, 15-minute window), 503 LECTURER_REGISTRATION_DISABLED |
+| POST | `/forgot-password` | none | `{ login }` (student number, or staff e-mail / username) | `200 { message }`, the **same reply whether or not the account exists**. E-mails a 6-digit code to the recovery e-mail (lecturers: their staff e-mail). At most one e-mail per account per minute. | 400 VALIDATION_ERROR, 429 TOO_MANY_ATTEMPTS, 503 EMAIL_NOT_CONFIGURED |
+| POST | `/reset-with-code` | none | `{ login, code, new_password (12+) }`. Code: 6 digits from the e-mail, or 16 characters from the lecturer. | `200 { message, username }` | 400 VALIDATION_ERROR, 400 INVALID_RESET_CODE (wrong, used, expired, or 5 wrong tries), 429 TOO_MANY_ATTEMPTS |
+| POST | `/reset-password` | none | `{ student_number, reset_code, new_password }` (older app versions) | as `reset-with-code` | as `reset-with-code` |
+| POST | `/lecturer-reset-password` | none | `{ email, staff_id, faculty_token, new_password (12+) }` | `200 { message }` | 400 VALIDATION_ERROR, 400 INVALID_RESET_DETAILS, 429 TOO_MANY_ATTEMPTS, 503 RESET_DISABLED (no faculty code set) |
+
+**Forgot password.** Codes are e-mailed through Brevo's HTTPS API (Render's free plan blocks SMTP).
+A student adds a **recovery e-mail** on their profile (`/api/account/email`); a lecturer's code goes
+to their staff e-mail. Backups: a one-time code from the lecturer (students), or staff ID + faculty
+code (lecturers). Every code is hashed, works once, expires after 15 minutes and stops after 5 wrong
+tries. Public routes allow 10 requests per IP per 15 minutes. The seeded lecturer (no staff profile,
+username not an e-mail) resets with `node scripts/check_login.js --reset` on the server.
+
+## Account — `/api/account` (any signed-in role)
+
+| Method | Route | Body | Success | Errors |
+|---|---|---|---|---|
+| GET | `/email` | — | `200 { email, codes_sent_to }` (own account only) | 401 |
+| PUT | `/email` | `{ email }` (empty removes it) | `200 { message, email }` | 400 VALIDATION_ERROR, 401 |
 
 ## Students — `/api/students` (LECTURER only)
 
@@ -64,6 +82,7 @@ retry gets the same refusal instead of a different result.
 | PUT | `/:id` | ✔ | `{ student_name, student_number, programme_code, group_code \| null, expected_version }` | `200 { student_id, record_version }` | 400 EXPECTED_VERSION_REQUIRED, 404 STUDENT_NOT_FOUND, 409 VERSION_CONFLICT (+ `current`), 409 GROUP_FULL, 409 DUPLICATE_STUDENT_NUMBER, 410 STUDENT_DELETED |
 | DELETE | `/:id` | ✔ | `{ expected_version }` | `200 { student_id, record_version, already_deleted }` | 404 STUDENT_NOT_FOUND, 409 VERSION_CONFLICT |
 | POST | `/:id/claim-code` | | — | `201 { student_id, claim_code, expires_in_minutes: 15 }` (one-time; only the hash is stored) | 404 STUDENT_NOT_FOUND, 409 STUDENT_ALREADY_CLAIMED |
+| POST | `/:id/reset-code` | | — | `201 { reset_code, username, expires_in_minutes: 15 }` (one-time; only the hash is stored) | 404 NO_ACCOUNT (not claimed yet: give a claim code instead), 409 ACCOUNT_INACTIVE |
 
 A `student` object: `{ student_id, student_number, student_name, programme_code, programme_name, group_code, record_version }`.
 
@@ -78,6 +97,7 @@ delete returns `200` with `already_deleted: true`.
 | GET | `/` | any | | — | `200 { groups: [{ group_code, capacity, active_students, available_places }] }` | |
 | POST | `/:groupCode/assign` | LECTURER | ✔ | `{ student_id }` | `200 { student_id, group_code, active_students, capacity, record_version }` | 400, 404 GROUP_NOT_FOUND, 404 ACTIVE_STUDENT_NOT_FOUND, 409 GROUP_FULL |
 | POST | `/` | LECTURER | ✔ | `{}` | `201 { group_code, capacity: 15, groups }`. Creates the next code (G15, G16, …). | |
+| DELETE | `/:groupCode` | LECTURER | ✔ | `{ confirm_students }` (the count the lecturer was shown) | `200 { group_code, unassigned_students, groups }`. The group's students become **Unassigned**; no student is deleted. | 404 GROUP_NOT_FOUND, 409 GROUP_CHANGED (the count changed since, nothing done), 400 VALIDATION_ERROR |
 | GET | `/auto-assign/preview` | LECTURER | | — | `200 { unassigned, placements: [{ group_code, new_group, before, added, after, capacity }], new_groups, fill_limit: 15 }`. Changes nothing. | |
 | POST | `/auto-assign` | LECTURER | ✔ | `{}` | `200 { assigned, placements, new_groups, groups }` | |
 | GET | `/export.xlsx` | LECTURER | | — | `200` Excel file: a Summary sheet, one sheet per group (No., student number, name, programme) and an Unassigned sheet if needed | 500 EXPORT_FAILED |

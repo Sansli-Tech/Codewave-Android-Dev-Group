@@ -13,6 +13,7 @@
   "db:migrate:002": "node scripts/run_sql.js db/migrations/002_correction_requests.sql",
   "db:schema": "node scripts/run_sql.js db/schema.sql",
   "db:seed-reference": "node scripts/run_sql.js db/seed_reference.sql",
+  "db:migrate:003": "node scripts/run_sql.js db/migrations/003_password_resets.sql",
   "db:check-capacity": "node scripts/check_capacity.js",
   "seed:lecturer": "node src/seedLecturer.js",
   "db:check-login": "node scripts/check_login.js",

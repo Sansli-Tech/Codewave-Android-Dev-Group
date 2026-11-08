@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Student Home tab: greeting, my group (navy card), what's pending, quick actions. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/campus_ground"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_campus_pattern"
+            android:importantForAccessibility="no" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Greeting + sync chip -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvStudentGreeting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/campus_muted"
+                            android:textSize="13sp"
+                            tools:text="Good morning" />
+
+                        <TextView
+                            android:id="@+id/tvStudentHomeName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/campus_text"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            tools:text="Mwila Banda" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/chipStudentSync"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_campus_chip_ok"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="@string/chip_synced"
+                        android:textColor="@color/campus_ok_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- My group (navy card) -->
+                <LinearLayout
+                    android:id="@+id/cardMyGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_campus_hero"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/student_home_group_label"
+                        android:textColor="@color/campus_on_navy_muted"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvHomeGroupCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="34sp"
+                        android:textStyle="bold"
+                        tools:text="G08" />
+
+                    <TextView
+                        android:id="@+id/tvHomeGroupOccupancy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/campus_on_navy_muted"
+                        android:textSize="14sp"
+                        tools:text="12 of 15 places taken" />
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/barHomeGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:importantForAccessibility="no"
+                        app:indicatorColor="@android:color/white"
+                        app:trackColor="@color/campus_on_navy_muted"
+                        app:trackCornerRadius="4dp"
+                        app:trackThickness="6dp" />
+                </LinearLayout>
+
+                <!-- Something is waiting: pending request, action required, correction -->
+                <TextView
+                    android:id="@+id/tvHomePending"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_campus_chip_warn"
+                    android:padding="12dp"
+                    android:textColor="@color/campus_warn_text"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    android:accessibilityLiveRegion="polite"
+                    tools:text="Group request for G05 is Pending: the server hasn't confirmed it yet."
+                    tools:visibility="visible" />
+
+                <!-- Recovery e-mail reminder (only while none is saved) -->
+                <TextView
+                    android:id="@+id/tvHomeRecoveryReminder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_campus_card"
+                    android:minHeight="48dp"
+                    android:padding="12dp"
+                    android:text="@string/student_home_add_email"
+                    android:textColor="@color/campus_text"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <!-- Quick actions -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/student_home_actions"
+                    android:textColor="@color/campus_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:accessibilityHeading="true" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHomeChooseGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:minHeight="52dp"
+                    android:text="@string/student_home_choose_group"
+                    app:icon="@drawable/ic_nav_groups"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHomeMyDetails"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:minHeight="52dp"
+                    android:text="@string/student_home_my_details"
+                    app:icon="@drawable/ic_nav_profile"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHomeSync"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:minHeight="48dp"
+                    android:text="@string/student_home_sync" />
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavStudent"
+        style="@style/Widget.MUSync.BottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/menu_nav_student" />
+</LinearLayout>

@@ -32,6 +32,11 @@ public final class GroupRows {
             this.capacity = capacity;
         }
 
+        /** A row from server numbers (e.g. GET /api/groups). */
+        public static Row of(String code, int count, int capacity) {
+            return new Row(code, count, capacity);
+        }
+
         public boolean isFull() { return count >= capacity; }
         double fill() { return capacity > 0 ? (double) count / capacity : 0; }
     }

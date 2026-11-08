@@ -64,10 +64,12 @@ public class GroupsActivity extends AppCompatActivity {
         View newGroup = findViewById(R.id.btnNewGroup);
         View autoAssign = findViewById(R.id.btnAutoAssign);
         View export = findViewById(R.id.btnExportExcel);
+        View delete = findViewById(R.id.btnDeleteGroup);
         View progress = findViewById(R.id.progressGroupAdmin);
         newGroup.setOnClickListener(v -> confirmNewGroup());
         autoAssign.setOnClickListener(v -> admin.previewAutoAssign());
         export.setOnClickListener(v -> admin.exportToExcel());
+        delete.setOnClickListener(v -> admin.chooseGroupToDelete());
 
         admin.isBusy().observe(this, isBusy -> {
             boolean b = Boolean.TRUE.equals(isBusy);
@@ -75,6 +77,7 @@ public class GroupsActivity extends AppCompatActivity {
             newGroup.setEnabled(!b);
             autoAssign.setEnabled(!b);
             export.setEnabled(!b);
+            delete.setEnabled(!b);
         });
         admin.getEvents().observe(this, event -> {
             if (event == null || !event.take()) return;
@@ -84,6 +87,9 @@ public class GroupsActivity extends AppCompatActivity {
                     break;
                 case EXPORTED:
                     shareExcel(event.file);
+                    break;
+                case PICK_DELETE:
+                    pickGroupToDelete(event.codes, event.counts);
                     break;
                 default:
                     redrawGroups();   // a new group may have been added to the list
@@ -101,6 +107,30 @@ public class GroupsActivity extends AppCompatActivity {
                 .setTitle(R.string.group_new_title)
                 .setMessage(R.string.group_new_message)
                 .setPositiveButton(R.string.group_new_confirm, (d, w) -> admin.createGroup())
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void pickGroupToDelete(String[] codes, int[] counts) {
+        String[] labels = new String[codes.length];
+        for (int i = 0; i < codes.length; i++) {
+            labels[i] = getResources().getQuantityString(R.plurals.group_delete_item, counts[i], codes[i], counts[i]);
+        }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.group_delete_pick_title)
+                .setItems(labels, (d, which) -> confirmDelete(codes[which], counts[which]))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void confirmDelete(String code, int count) {
+        String message = count == 0
+                ? getString(R.string.group_delete_empty, code)
+                : getResources().getQuantityString(R.plurals.group_delete_with_students, count, code, count);
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.group_delete_title, code))
+                .setMessage(message)
+                .setPositiveButton(R.string.group_delete_confirm, (d, w) -> admin.deleteGroup(code, count))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }

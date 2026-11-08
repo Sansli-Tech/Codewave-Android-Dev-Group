@@ -56,7 +56,9 @@ public class StudentProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_profile);
-        com.example.mustudentsync.util.BackToExit.install(this); // Back twice to exit, not by accident
+        // Profile is a tab above Home: Back returns to Home (Home handles "press back again to exit").
+        com.example.mustudentsync.util.StudentNav.setup(this, findViewById(R.id.bottomNavStudent),
+                R.id.nav_student_profile);
         populated = savedInstanceState != null && savedInstanceState.getBoolean(KEY_POPULATED);
 
         viewModel = new ViewModelProvider(this).get(StudentProfileViewModel.class);
@@ -65,6 +67,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         initViews();
         setupProgramDropdown();
         setupActions();
+        setupRecoveryEmail(savedInstanceState);
 
         findViewById(R.id.btnStudentSignOut).setOnClickListener(v ->
                 new AlertDialog.Builder(this)
@@ -87,6 +90,10 @@ public class StudentProfileActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (recoverySaved != null) {
+            outState.putString(KEY_RECOVERY_SAVED, recoverySaved);
+            outState.putBoolean(KEY_RECOVERY_EDITING, recoveryEditing);
+        }
         outState.putBoolean(KEY_POPULATED, populated);
     }
 
@@ -108,6 +115,111 @@ public class StudentProfileActivity extends AppCompatActivity {
                 finish();
             });
         });
+    }
+
+    // ------------------------------------------------------------ recovery e-mail
+
+    private static final String KEY_RECOVERY_EDITING = "recovery_editing";
+    private static final String KEY_RECOVERY_SAVED = "recovery_saved";
+    private String recoverySaved;          // null = not loaded yet; "" = none
+    private boolean recoveryEditing;
+
+    /**
+     * Recovery e-mail card, where "Forgot password?" codes are sent.
+     * Saved: the address is shown as text with Edit and Delete. Adding/editing: the input box
+     * with Save (and Cancel when an address already exists). Survives rotation.
+     */
+    private void setupRecoveryEmail(Bundle saved) {
+        com.example.mustudentsync.data.AccountManager accounts = new com.example.mustudentsync.data.AccountManager(this);
+        com.google.android.material.textfield.TextInputLayout til = findViewById(R.id.tilRecoveryEmail);
+        com.google.android.material.textfield.TextInputEditText field = findViewById(R.id.etRecoveryEmail);
+        View save = findViewById(R.id.btnSaveRecoveryEmail);
+        View delete = findViewById(R.id.btnDeleteRecoveryEmail);
+
+        if (saved != null && saved.containsKey(KEY_RECOVERY_SAVED)) {
+            recoverySaved = saved.getString(KEY_RECOVERY_SAVED);
+            recoveryEditing = saved.getBoolean(KEY_RECOVERY_EDITING);
+            showRecovery();
+        } else {
+            showRecovery();
+            accounts.getRecoveryEmail((ok, email) -> {
+                if (isFinishing()) return;
+                if (!ok) {
+                    ((TextView) findViewById(R.id.tvRecoveryHint)).setText(R.string.recovery_hint_offline);
+                    return;
+                }
+                recoverySaved = email != null ? email : "";
+                recoveryEditing = recoverySaved.isEmpty();
+                showRecovery();
+            });
+        }
+
+        findViewById(R.id.btnEditRecoveryEmail).setOnClickListener(v -> {
+            recoveryEditing = true;
+            field.setText(recoverySaved);
+            if (field.getText() != null) field.setSelection(field.getText().length());
+            showRecovery();
+            field.requestFocus();
+        });
+        findViewById(R.id.btnCancelRecoveryEmail).setOnClickListener(v -> {
+            recoveryEditing = false;
+            til.setError(null);
+            field.setText("");
+            showRecovery();
+        });
+        delete.setOnClickListener(v -> new AlertDialog.Builder(this)
+                .setTitle(R.string.recovery_delete_title)
+                .setMessage(R.string.recovery_delete_message)
+                .setPositiveButton(R.string.recovery_delete, (d, w) -> {
+                    delete.setEnabled(false);
+                    accounts.setRecoveryEmail("", (ok, message) -> {
+                        if (isFinishing()) return;
+                        delete.setEnabled(true);
+                        if (ok) {
+                            recoverySaved = "";
+                            recoveryEditing = true;
+                            field.setText("");
+                            showRecovery();
+                        }
+                        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                    });
+                })
+                .setNegativeButton(R.string.btn_cancel, null)
+                .show());
+        save.setOnClickListener(v -> {
+            String email = field.getText() != null ? field.getText().toString().trim() : "";
+            if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                til.setError(getString(R.string.recovery_invalid));
+                return;
+            }
+            til.setError(null);
+            save.setEnabled(false);
+            accounts.setRecoveryEmail(email, (ok, message) -> {
+                if (isFinishing()) return;
+                save.setEnabled(true);
+                if (ok) {
+                    recoverySaved = email.toLowerCase(java.util.Locale.ROOT);
+                    recoveryEditing = false;
+                    field.setText("");   // the box empties; the address shows as saved text
+                    showRecovery();
+                }
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            });
+        });
+    }
+
+    private void showRecovery() {
+        boolean has = recoverySaved != null && !recoverySaved.isEmpty();
+        boolean editing = recoveryEditing || !has;
+        findViewById(R.id.groupRecoverySaved).setVisibility(editing ? View.GONE : View.VISIBLE);
+        findViewById(R.id.groupRecoveryEdit).setVisibility(editing ? View.VISIBLE : View.GONE);
+        findViewById(R.id.btnCancelRecoveryEmail).setVisibility(editing && has ? View.VISIBLE : View.GONE);
+        TextView value = findViewById(R.id.tvRecoveryEmailValue);
+        value.setText(has ? recoverySaved : "");
+        value.setContentDescription(has ? getString(R.string.recovery_saved_description, recoverySaved) : null);
+        TextView hint = findViewById(R.id.tvRecoveryHint);
+        if (recoverySaved == null) return;   // still loading: keep the default hint
+        hint.setText(has ? R.string.recovery_hint_set : R.string.recovery_hint_missing);
     }
 
     private void initViews() {

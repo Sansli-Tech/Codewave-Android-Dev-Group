@@ -18,6 +18,20 @@ passwords, and never paste them into AI tools.
 
 ---
 
+## Changes agreed with the lecturer
+
+The brief lists programmes CS, IT and DS and groups G01–G04. On the lecturer's instruction the app
+uses the full programme list (23 programmes) and lab groups G01–G14, and lecturers can now:
+
+- **create** the next group (G15, G16, …) with 15 places;
+- **auto-assign** every unassigned student into groups of up to 15 (preview first, nobody already placed is moved);
+- **delete** a group (its students become Unassigned, never deleted);
+- **export** all groups to an Excel `.xlsx` file (Summary sheet + one sheet per group) and share it.
+
+Students and lecturers can reset a forgotten password from the sign-in screen: a 6-digit code is
+e-mailed to them (students add a recovery e-mail on their profile; lecturers use their staff e-mail).
+Backups: a one-time code from the lecturer, or staff ID + faculty code for lecturers.
+
 ## 1. Backend setup
 
 Requirements: Node 18+ (the scripts use the built-in `fetch`), MySQL 8.
@@ -62,6 +76,8 @@ npm run db:migrate:002
 | `TRUST_PROXY` | `true` when running behind a hosting proxy that terminates HTTPS |
 | `REQUIRE_HTTPS` | `true` to refuse plain HTTP with `426 HTTPS_REQUIRED` (the health check stays open) |
 | `DB_SSL`, `DB_CA_FILE`, `DB_CA_CERT` | Cloud MySQL only: encrypted connection checked against the provider's CA certificate |
+| `BREVO_API_KEY`, `MAIL_FROM`, `MAIL_FROM_NAME` | E-mail for "Forgot password?" codes (Brevo HTTPS API; see `docs/DEPLOYMENT.md`) |
+| `MAIL_DEV_LOG` | `true` on your laptop only: print the e-mails in the server terminal instead of sending them |
 
 ### HTTPS
 

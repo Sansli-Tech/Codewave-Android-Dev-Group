@@ -101,6 +101,17 @@
                 android:text="@string/group_export_button"
                 android:contentDescription="@string/group_export_button_description" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDeleteGroup"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="48dp"
+                android:text="@string/group_delete_button"
+                android:textColor="?attr/colorError"
+                android:contentDescription="@string/group_delete_button_description" />
+
             <!-- Sharesheet: group labels and counts only, never names (Activity D, Unit 7). -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnShareGroupSummary"

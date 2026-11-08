@@ -118,4 +118,20 @@ CREATE TABLE IF NOT EXISTS `change_requests` (
   CONSTRAINT `chk_requested_number` CHECK (regexp_like(`requested_number`, '^[0-9]{9}$'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- Added by migration 003 (forgot password)
+CREATE TABLE IF NOT EXISTS `password_reset_codes` (
+  `account_id`  char(36)     NOT NULL,
+  `code_hash`   varchar(255) NOT NULL,
+  `expires_at`  timestamp    NOT NULL,
+  `used_at`     timestamp    NULL DEFAULT NULL,
+  `created_by`  char(36)     DEFAULT NULL,
+  `created_at`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `wrong_attempts` int      NOT NULL DEFAULT 0,
+  PRIMARY KEY (`account_id`),
+  CONSTRAINT `fk_reset_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`)
+);
+
+-- Added by migration 004 (recovery e-mail)
+ALTER TABLE `accounts` ADD COLUMN `email` varchar(254) NULL DEFAULT NULL;
+
 SET FOREIGN_KEY_CHECKS = 1;

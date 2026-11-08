@@ -46,10 +46,13 @@ public class GroupAdminViewModel extends AndroidViewModel {
 
     /** One-off things for the screen to show or do. */
     public static class Event {
-        public enum Kind { MESSAGE, PREVIEW, EXPORTED }
+        public enum Kind { MESSAGE, PREVIEW, EXPORTED, PICK_DELETE }
         public final Kind kind;
         public final String text;
         public final File file;
+        // PICK_DELETE: the groups to choose from, with their current student counts.
+        public String[] codes;
+        public int[] counts;
         private boolean handled;
 
         Event(Kind kind, String text, File file) {
@@ -73,6 +76,8 @@ public class GroupAdminViewModel extends AndroidViewModel {
     // Kept until the server answers, then cleared: a retry re-sends the SAME ID.
     private String pendingCreateId;
     private String pendingAssignId;
+    private String pendingDeleteId;
+    private String pendingDeleteFor;   // "G05:15": a new ID if the group or the count changes
 
     public GroupAdminViewModel(@NonNull Application application) {
         super(application);
@@ -102,6 +107,78 @@ public class GroupAdminViewModel extends AndroidViewModel {
                     @Override
                     void refused(String text) {
                         pendingCreateId = null;
+                        message(text);
+                    }
+                });
+    }
+
+    // ------------------------------------------------------------------ delete group
+
+    /** Fetches the current groups and counts, so the lecturer picks with up-to-date numbers. */
+    public void chooseGroupToDelete() {
+        String bearer = bearerOrComplain();
+        if (bearer == null || Boolean.TRUE.equals(busy.getValue())) return;
+        busy.setValue(true);
+        RetrofitClient.getApiService().getGroups(bearer).enqueue(new Callback<GroupListResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<GroupListResponse> call, @NonNull Response<GroupListResponse> res) {
+                busy.setValue(false);
+                if (!res.isSuccessful() || res.body() == null || res.body().groups == null) {
+                    message(res.code() == 401 ? "Session expired. Sign in again."
+                            : "Couldn't load the groups (" + res.code() + ").");
+                    return;
+                }
+                GroupCatalog.saveFromServer(getApplication(), res.body());
+                int n = res.body().groups.size();
+                if (n == 0) {
+                    message("There are no groups to delete.");
+                    return;
+                }
+                Event e = new Event(Event.Kind.PICK_DELETE, null, null);
+                e.codes = new String[n];
+                e.counts = new int[n];
+                for (int i = 0; i < n; i++) {
+                    e.codes[i] = res.body().groups.get(i).groupCode;
+                    e.counts[i] = res.body().groups.get(i).activeStudents;
+                }
+                events.setValue(e);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<GroupListResponse> call, @NonNull Throwable t) {
+                busy.setValue(false);
+                message("No connection to the server. Deleting a group needs to be online.");
+            }
+        });
+    }
+
+    /** seenCount = the number of students the lecturer was shown in the confirmation. */
+    public void deleteGroup(String code, int seenCount) {
+        String bearer = bearerOrComplain();
+        if (bearer == null || Boolean.TRUE.equals(busy.getValue())) return;
+        String key = code + ":" + seenCount;
+        if (pendingDeleteId == null || !key.equals(pendingDeleteFor)) {
+            pendingDeleteId = UUID.randomUUID().toString();
+            pendingDeleteFor = key;
+        }
+        JsonObject body = new JsonObject();
+        body.addProperty("confirm_students", seenCount);
+        busy.setValue(true);
+        RetrofitClient.getApiService().deleteGroupOp(bearer, pendingDeleteId, code, body)
+                .enqueue(new Reply() {
+                    @Override
+                    void ok(JsonObject reply) {
+                        pendingDeleteId = null;
+                        saveGroups(reply);
+                        int n = reply.has("unassigned_students") ? reply.get("unassigned_students").getAsInt() : 0;
+                        message(n == 0 ? "Group " + code + " deleted."
+                                : "Group " + code + " deleted. " + n + " students are now Unassigned; "
+                                + "use Auto-assign to place them.");
+                    }
+
+                    @Override
+                    void refused(String text) {
+                        pendingDeleteId = null;
                         message(text);
                     }
                 });

@@ -77,6 +77,8 @@ public class SignInActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnSignIn.setOnClickListener(v -> handleSignIn());
+        findViewById(R.id.btnForgotPassword).setOnClickListener(v ->
+                startActivity(new Intent(this, ForgotPasswordActivity.class)));
         btnGoToRegister.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
             finish();
@@ -159,7 +161,7 @@ public class SignInActivity extends AppCompatActivity {
                     showError(msg);
                     return;
                 }
-                Intent intent = new Intent(this, StudentProfileActivity.class);
+                Intent intent = new Intent(this, StudentHomeActivity.class);
                 intent.putExtra("STUDENT_ID", studentId);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

@@ -70,6 +70,142 @@ public class AccountManager {
         });
     }
 
+    // ------------------------------------------------------------------ forgot password
+
+    /** Lecturer only. On success the callback's message is the reset code. */
+    public void generateResetCode(String studentId, Callback cb) {
+        executor.execute(() -> {
+            try {
+                Response<okhttp3.ResponseBody> res = RetrofitClient.getApiService()
+                        .generateResetCode(session.getBearerToken(), studentId)
+                        .execute();
+                if (res.isSuccessful() && res.body() != null) {
+                    com.google.gson.JsonObject o = com.google.gson.JsonParser
+                            .parseString(res.body().string()).getAsJsonObject();
+                    post(cb, true, o.get("reset_code").getAsString());
+                    return;
+                }
+                if (res.code() == 401) {
+                    post(cb, false, "Session expired. Sign in again.");
+                } else {
+                    String text = serverMessage(res);
+                    post(cb, false, text != null ? text : "Couldn't create a reset code (" + res.code() + ").");
+                }
+            } catch (Exception e) {
+                post(cb, false, "Can't reach the server.");
+            }
+        });
+    }
+
+    /** Asks the server to e-mail a code. The reply never says whether the account exists. */
+    public void requestResetCode(String login, Callback cb) {
+        com.google.gson.JsonObject body = new com.google.gson.JsonObject();
+        body.addProperty("login", login.trim());
+        executor.execute(() -> {
+            try {
+                Response<okhttp3.ResponseBody> res = RetrofitClient.getApiService().forgotPassword(body).execute();
+                if (res.isSuccessful() && res.body() != null) {
+                    com.google.gson.JsonObject o = com.google.gson.JsonParser
+                            .parseString(res.body().string()).getAsJsonObject();
+                    post(cb, true, o.has("message") ? o.get("message").getAsString() : "Code sent.");
+                    return;
+                }
+                String text = serverMessage(res);
+                post(cb, false, text != null ? text : "Couldn't send a code (" + res.code() + ").");
+            } catch (Exception e) {
+                post(cb, false, "Can't reach the server. Check your connection and try again.");
+            }
+        });
+    }
+
+    /** Student or lecturer: login + code (e-mailed 6 digits, or 16 characters from the lecturer). */
+    public void resetWithCode(String login, String code, String newPassword, Callback cb) {
+        com.google.gson.JsonObject body = new com.google.gson.JsonObject();
+        body.addProperty("login", login.trim());
+        body.addProperty("code", code.trim().toUpperCase(java.util.Locale.ROOT));
+        body.addProperty("new_password", newPassword);
+        reset(RetrofitClient.getApiService().resetWithCode(body), cb,
+                "Password changed. Sign in with your new password.");
+    }
+
+    /** Signed in: the recovery e-mail on the server (message = e-mail, or "" if none). */
+    public void getRecoveryEmail(Callback cb) {
+        executor.execute(() -> {
+            try {
+                Response<okhttp3.ResponseBody> res = RetrofitClient.getApiService()
+                        .getRecoveryEmail(session.getBearerToken()).execute();
+                if (res.isSuccessful() && res.body() != null) {
+                    com.google.gson.JsonObject o = com.google.gson.JsonParser
+                            .parseString(res.body().string()).getAsJsonObject();
+                    post(cb, true, o.has("email") && !o.get("email").isJsonNull() ? o.get("email").getAsString() : "");
+                    return;
+                }
+                post(cb, false, null);
+            } catch (Exception e) {
+                post(cb, false, null);
+            }
+        });
+    }
+
+    public void setRecoveryEmail(String email, Callback cb) {
+        com.google.gson.JsonObject body = new com.google.gson.JsonObject();
+        body.addProperty("email", email.trim());
+        executor.execute(() -> {
+            try {
+                Response<okhttp3.ResponseBody> res = RetrofitClient.getApiService()
+                        .setRecoveryEmail(session.getBearerToken(), body).execute();
+                if (res.isSuccessful()) {
+                    post(cb, true, email.trim().isEmpty() ? "Recovery e-mail removed." : "Recovery e-mail saved.");
+                    return;
+                }
+                String text = serverMessage(res);
+                post(cb, false, res.code() == 401 ? "Session expired. Sign in again."
+                        : text != null ? text : "Couldn't save (" + res.code() + ").");
+            } catch (Exception e) {
+                post(cb, false, "Can't reach the server. Saving the e-mail needs a connection.");
+            }
+        });
+    }
+
+    /** Lecturer: reset with staff e-mail, staff ID and the faculty code. */
+    public void resetLecturerPassword(String email, String staffId, String facultyCode, String newPassword, Callback cb) {
+        com.google.gson.JsonObject body = new com.google.gson.JsonObject();
+        body.addProperty("email", email.trim());
+        body.addProperty("staff_id", staffId.trim());
+        body.addProperty("faculty_token", facultyCode.trim());
+        body.addProperty("new_password", newPassword);
+        reset(RetrofitClient.getApiService().resetLecturerPassword(body), cb,
+                "Password changed. Sign in with your staff e-mail and new password.");
+    }
+
+    private void reset(retrofit2.Call<okhttp3.ResponseBody> call, Callback cb, String okText) {
+        executor.execute(() -> {
+            try {
+                Response<okhttp3.ResponseBody> res = call.execute();
+                if (res.isSuccessful()) {
+                    post(cb, true, okText);
+                    return;
+                }
+                String text = serverMessage(res);
+                post(cb, false, text != null ? text : "The reset failed (" + res.code() + ").");
+            } catch (Exception e) {
+                post(cb, false, "Can't reach the server. Check your connection and try again.");
+            }
+        });
+    }
+
+    /** The human "message" from an error reply, or null. */
+    private static String serverMessage(Response<?> res) {
+        try {
+            if (res.errorBody() == null) return null;
+            com.google.gson.JsonObject o = com.google.gson.JsonParser
+                    .parseString(res.errorBody().string()).getAsJsonObject();
+            return o.has("message") ? o.get("message").getAsString() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /**
      * Student registration. The student number is also used as the username,
      * so the student signs in with their student number and new password.
