@@ -176,4 +176,44 @@
     <string name="code_share_chooser">Send to the student privately</string>
     <string name="claim_share_text">Your MUStudentSync claim code is %1$s. In the app tap Register, enter your student number %2$s, this code and a password of your choice. It works once and expires in 15 minutes. Do not share it.</string>
     <string name="reset_share_text">Your MUStudentSync password reset code is %1$s. In the app tap "Forgot password?", choose Student, and enter your student number %2$s, this code and a new password. It works once and expires in 15 minutes. Do not share it.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_role_student">Student</string>
+    <string name="settings_role_lecturer">Lecturer</string>
+    <string name="settings_change_password">Change password</string>
+    <string name="settings_current_password">Current password</string>
+    <string name="settings_recovery_email">Recovery e-mail</string>
+    <string name="settings_recovery_set">Reset codes are sent to %1$s</string>
+    <string name="settings_recovery_staff">Reset codes are sent to your staff e-mail. You can add a different address here.</string>
+    <string name="settings_sync">Sync &amp; data</string>
+    <string name="settings_last_sync">Last synced: %1$s</string>
+    <string name="settings_never_synced">Not synced yet on this phone</string>
+    <string name="settings_queue_empty">Nothing waiting to sync</string>
+    <plurals name="settings_queue_waiting">
+        <item quantity="one">%1$d change waiting to sync</item>
+        <item quantity="other">%1$d changes waiting to sync</item>
+    </plurals>
+    <plurals name="settings_queue_attention">
+        <item quantity="one">%1$d change needs your attention</item>
+        <item quantity="other">%1$d changes need your attention</item>
+    </plurals>
+    <string name="settings_sync_explain">Changes are saved on this phone first and sent automatically when you\'re online, about every 15 minutes or right after you save.</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">MUStudentSync %1$s</string>
+    <string name="settings_server">Server: %1$s</string>
+    <string name="settings_about_body">Lab group registration for Mulungushi University (ICT361 Mobile Application Development group project).</string>
+    <string name="settings_privacy_body">Privacy: your data is only sent to the server above, over HTTPS when hosted. Signing out clears the data saved on this phone. Passwords and codes are never stored on the phone.</string>
+    <string name="settings_help_password_title">I forgot my password</string>
+    <string name="settings_help_password_body">Sign out, then tap "Forgot password?" on the sign-in screen. A 6-digit code is e-mailed to your recovery e-mail (lecturers: your staff e-mail). No e-mail added? Ask your lecturer for a reset code. While signed in, you can change your password above.</string>
+    <string name="settings_help_offline_body">You can keep working: changes are saved on this phone and marked Saved locally. They are sent once you\'re back online. Lists show this phone\'s copy until then.</string>
+    <string name="settings_help_pending_title">What do the labels mean?</string>
+    <string name="settings_help_pending_body">Saved locally: only on this phone so far. Pending / Syncing: being sent. Synced: the server has it. Action required: the server refused the change (for example the group is full, or someone else changed the record first). Open it to edit again or discard your change.</string>
+    <string name="settings_help_group_title">Groups and places</string>
+    <string name="settings_help_group_body_student">Each group holds at most 15 students. Ask for a place on the Groups tab. Saving a request doesn\'t reserve a place: the server decides, and if the group fills up first you keep your current group.</string>
+    <string name="settings_help_group_body_lecturer">Groups hold at most 15 students (some older groups allow 16). On the Groups tab you can create a group, auto-assign unassigned students, delete a group (its students become Unassigned) and export everything to Excel.</string>
+    <string name="settings_help_role_student">Your profile shows your details and group. You can change your name and programme yourself; a student number change must be requested and approved by a lecturer.</string>
+    <string name="settings_help_role_lecturer">From the Roster tab, tap ⋮ next to a student for claim codes, password reset codes, editing and deleting. Share codes only with that student, privately.</string>
 </resources>

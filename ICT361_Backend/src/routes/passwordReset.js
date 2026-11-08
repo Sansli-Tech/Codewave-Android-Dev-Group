@@ -238,6 +238,44 @@ accountRouter.put('/email', async (req, res) => {
   }
 });
 
+const wrongCurrent = new Map();   // account_id -> times of wrong "current password" answers
+
+// PUT /api/account/password   { current_password, new_password }   (signed in, any role)
+// Change password while signed in. 5 wrong current passwords per 15 minutes, then wait.
+accountRouter.put('/password', async (req, res) => {
+  const { current_password: current, new_password: next } = req.body || {};
+  if (typeof current !== 'string' || !current || !validPassword(next)) {
+    return res.status(400).json({
+      error: 'VALIDATION_ERROR',
+      message: 'Enter your current password and a new password of 12-128 characters.'
+    });
+  }
+  if (current === next) {
+    return res.status(400).json({ error: 'SAME_PASSWORD', message: 'The new password must be different.' });
+  }
+  const id = req.user.accountId;
+  const now = Date.now();
+  const recent = (wrongCurrent.get(id) || []).filter((t) => now - t < 15 * 60 * 1000);
+  if (recent.length >= 5) {
+    return res.status(429).json({ error: 'TOO_MANY_ATTEMPTS', message: 'Too many wrong attempts. Wait 15 minutes.' });
+  }
+  try {
+    const [rows] = await pool.query('SELECT password_hash FROM accounts WHERE account_id = ? AND is_active = 1', [id]);
+    if (!rows.length) return res.status(404).json({ error: 'ACCOUNT_NOT_FOUND' });
+    if (!(await bcrypt.compare(current, rows[0].password_hash))) {
+      recent.push(now);
+      wrongCurrent.set(id, recent);
+      return res.status(400).json({ error: 'WRONG_PASSWORD', message: 'Your current password is not correct.' });
+    }
+    await pool.query('UPDATE accounts SET password_hash = ? WHERE account_id = ?', [await bcrypt.hash(next, 12), id]);
+    wrongCurrent.delete(id);
+    return res.json({ message: 'Password changed.' });
+  } catch (error) {
+    console.error('Change password failed:', error.message);
+    return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
 // ------------------------------------------------------------------ public reset routes
 
 const publicRouter = express.Router();

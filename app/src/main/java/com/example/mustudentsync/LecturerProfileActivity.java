@@ -31,7 +31,8 @@ public class LecturerProfileActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvProfileUsername)).setText(username != null ? username : "—");
         ((TextView) findViewById(R.id.tvProfileRole)).setText("Lecturer");
         ((TextView) findViewById(R.id.tvProfileServer)).setText(RetrofitClient.BASE_URL);
-        com.example.mustudentsync.util.ThemePicker.bind(findViewById(R.id.themePickerProfile));
+        findViewById(R.id.btnOpenSettings).setOnClickListener(v ->
+                startActivity(new Intent(this, SettingsActivity.class)));
 
         findViewById(R.id.btnSignOut).setOnClickListener(v ->
                 new AlertDialog.Builder(this)

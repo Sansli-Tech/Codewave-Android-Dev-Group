@@ -32,6 +32,9 @@ Students and lecturers can reset a forgotten password from the sign-in screen: a
 e-mailed to them (students add a recovery e-mail on their profile; lecturers use their staff e-mail).
 Backups: a one-time code from the lecturer, or staff ID + faculty code for lecturers.
 
+Students have Home, Groups and Profile tabs. A **Settings** screen (both roles) holds change
+password, recovery e-mail, appearance (Phone / Light / Dark), sync status, help, about and sign out.
+
 ## 1. Backend setup
 
 Requirements: Node 18+ (the scripts use the built-in `fetch`), MySQL 8.

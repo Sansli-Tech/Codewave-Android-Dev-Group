@@ -71,6 +71,7 @@ username not an e-mail) resets with `node scripts/check_login.js --reset` on the
 |---|---|---|---|---|
 | GET | `/email` | — | `200 { email, codes_sent_to }` (own account only) | 401 |
 | PUT | `/email` | `{ email }` (empty removes it) | `200 { message, email }` | 400 VALIDATION_ERROR, 401 |
+| PUT | `/password` | `{ current_password, new_password (12+) }` | `200 { message }` | 400 VALIDATION_ERROR, 400 SAME_PASSWORD, 400 WRONG_PASSWORD, 401, 429 TOO_MANY_ATTEMPTS (5 wrong in 15 minutes) |
 
 ## Students — `/api/students` (LECTURER only)
 

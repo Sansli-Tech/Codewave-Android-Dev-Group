@@ -73,6 +73,17 @@
                         android:textColor="@color/campus_ok_text"
                         android:textSize="12sp"
                         android:textStyle="bold" />
+
+                    <!-- ⚙ Settings -->
+                    <ImageButton
+                        android:id="@+id/btnStudentHomeSettings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/settings_title"
+                        android:src="@drawable/ic_settings"
+                        app:tint="@color/campus_text" />
                 </LinearLayout>
 
                 <!-- My group (navy card) -->

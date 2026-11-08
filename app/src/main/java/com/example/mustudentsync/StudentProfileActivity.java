@@ -59,6 +59,15 @@ public class StudentProfileActivity extends AppCompatActivity {
         // Profile is a tab above Home: Back returns to Home (Home handles "press back again to exit").
         com.example.mustudentsync.util.StudentNav.setup(this, findViewById(R.id.bottomNavStudent),
                 R.id.nav_student_profile);
+
+        // ⚙ Settings: password, recovery e-mail, appearance, help, about, sign out.
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbarProfile);
+        toolbar.inflateMenu(R.menu.menu_profile);
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() != R.id.action_settings) return false;
+            startActivity(new android.content.Intent(this, SettingsActivity.class));
+            return true;
+        });
         populated = savedInstanceState != null && savedInstanceState.getBoolean(KEY_POPULATED);
 
         viewModel = new ViewModelProvider(this).get(StudentProfileViewModel.class);

@@ -43,6 +43,7 @@
         <activity android:name=".ForgotPasswordActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".StudentHomeActivity" android:exported="false" />
         <activity android:name=".StudentGroupsActivity" android:exported="false" />
+        <activity android:name=".SettingsActivity" android:exported="false" />
 
         <!-- Shares the exported Excel file with other apps through a temporary content:// link. -->
         <provider

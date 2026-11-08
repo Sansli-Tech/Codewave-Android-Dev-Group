@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings (both roles): Account, Appearance, Sync & data, Help, About, Sign out. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/campus_ground"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarSettings"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/campus_card"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:navigationContentDescription="@string/settings_back"
+        app:title="@string/settings_title" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- ACCOUNT -->
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/settings_account" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_campus_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvSettingsUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/campus_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="951112099" />
+
+                <TextView
+                    android:id="@+id/tvSettingsRole"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/campus_muted"
+                    android:textSize="13sp"
+                    tools:text="Student" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnChangePassword"
+                    style="@style/SettingsRow"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/settings_change_password" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRecoveryEmail"
+                    style="@style/SettingsRow"
+                    android:text="@string/settings_recovery_email" />
+
+                <TextView
+                    android:id="@+id/tvSettingsRecovery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/campus_muted"
+                    android:textSize="13sp"
+                    tools:text="Codes are sent to student@example.com" />
+            </LinearLayout>
+
+            <!-- APPEARANCE: the existing Phone / Light / Dark card (it has its own title) -->
+            <include
+                android:id="@+id/themePickerSettings"
+                layout="@layout/layout_theme_picker" />
+
+            <!-- SYNC & DATA -->
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/settings_sync" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_campus_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvSettingsLastSync"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/campus_text"
+                    android:textSize="14sp"
+                    tools:text="Last synced: 5 minutes ago" />
+
+                <TextView
+                    android:id="@+id/tvSettingsQueue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/campus_muted"
+                    android:textSize="13sp"
+                    android:accessibilityLiveRegion="polite"
+                    tools:text="Nothing waiting to sync" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/settings_sync_explain"
+                    android:textColor="@color/campus_muted"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSettingsSyncNow"
+                    style="@style/SettingsRow"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/student_home_sync" />
+            </LinearLayout>
+
+            <!-- HELP -->
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/help_title" />
+
+            <include android:id="@+id/settingsHelpPassword" layout="@layout/item_info_card" />
+            <include android:id="@+id/settingsHelpOffline" layout="@layout/item_info_card" />
+            <include android:id="@+id/settingsHelpPending" layout="@layout/item_info_card" />
+            <include android:id="@+id/settingsHelpGroup" layout="@layout/item_info_card" />
+            <include android:id="@+id/settingsHelpRole" layout="@layout/item_info_card" />
+
+            <!-- ABOUT -->
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/settings_about" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_campus_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvSettingsVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/campus_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="MUStudentSync 1.0" />
+
+                <TextView
+                    android:id="@+id/tvSettingsServer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/campus_muted"
+                    android:textIsSelectable="true"
+                    android:textSize="12sp"
+                    tools:text="Server: https://…" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/settings_about_body"
+                    android:textColor="@color/campus_muted"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/settings_privacy_body"
+                    android:textColor="@color/campus_muted"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- SIGN OUT -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettingsSignOut"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:minHeight="52dp"
+                android:text="@string/profile_sign_out"
+                android:textColor="@color/campus_full"
+                app:strokeColor="@color/campus_full" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -64,6 +64,8 @@ public class StudentHomeActivity extends AppCompatActivity {
                 StudentNav.open(this, R.id.nav_student_profile, R.id.nav_student_home));
         tvRecovery.setOnClickListener(v ->
                 StudentNav.open(this, R.id.nav_student_profile, R.id.nav_student_home));
+        findViewById(R.id.btnStudentHomeSettings).setOnClickListener(v ->
+                startActivity(new android.content.Intent(this, SettingsActivity.class)));
         findViewById(R.id.btnHomeSync).setOnClickListener(v -> {
             Toast.makeText(this, R.string.sync_in_progress, Toast.LENGTH_SHORT).show();
             new SyncManager(this).syncNow((ok, msg) -> {

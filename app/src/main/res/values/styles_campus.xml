@@ -52,4 +52,27 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/campus_text</item>
     </style>
+
+    <!-- Settings screen -->
+    <style name="SettingsSection">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textColor">@color/campus_muted</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:accessibilityHeading">true</item>
+    </style>
+
+    <style name="SettingsRow" parent="Widget.Material3.Button.TextButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:textColor">@color/campus_blue</item>
+        <item name="android:textSize">15sp</item>
+    </style>
 </resources>

@@ -38,7 +38,7 @@
     <string name="help_offline_title">I\'m offline</string>
     <string name="help_offline_body">You can still see the data already on your phone. Pull the latest changes from the Sync tab once you\'re back online.</string>
     <string name="help_account_title">I forgot my password</string>
-    <string name="help_account_body">Ask your lecturer to reset your account.</string>
+    <string name="help_account_body">Tap "Forgot password?" on the sign-in screen. A code is e-mailed to your recovery e-mail (lecturers: your staff e-mail). No e-mail added yet? Ask your lecturer for a reset code.</string>
 
     <string name="account_title">Account</string>
     <string name="account_body">Sign in if you already have an account, or register with the claim code from your lecturer.</string>

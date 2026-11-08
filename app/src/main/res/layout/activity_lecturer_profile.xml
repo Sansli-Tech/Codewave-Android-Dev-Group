@@ -111,9 +111,17 @@
                 app:iconTint="@color/campus_full"
                 app:iconGravity="textStart" />
 
-            <include
-                android:id="@+id/themePickerProfile"
-                layout="@layout/layout_theme_picker" />
+            <!-- Appearance, password, help and about now live in Settings -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOpenSettings"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/settings_title"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_settings"
+                app:iconGravity="textStart" />
         </LinearLayout>
     </ScrollView>
 

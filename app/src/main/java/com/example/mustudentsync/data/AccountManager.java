@@ -147,6 +147,28 @@ public class AccountManager {
         });
     }
 
+    /** Signed in: change password with the current one. */
+    public void changePassword(String current, String next, Callback cb) {
+        com.google.gson.JsonObject body = new com.google.gson.JsonObject();
+        body.addProperty("current_password", current);
+        body.addProperty("new_password", next);
+        executor.execute(() -> {
+            try {
+                Response<okhttp3.ResponseBody> res = RetrofitClient.getApiService()
+                        .changePassword(session.getBearerToken(), body).execute();
+                if (res.isSuccessful()) {
+                    post(cb, true, "Password changed. Use the new password next time you sign in.");
+                    return;
+                }
+                String text = serverMessage(res);
+                post(cb, false, res.code() == 401 ? "Session expired. Sign in again."
+                        : text != null ? text : "Couldn't change the password (" + res.code() + ").");
+            } catch (Exception e) {
+                post(cb, false, "Can't reach the server. Changing the password needs a connection.");
+            }
+        });
+    }
+
     public void setRecoveryEmail(String email, Callback cb) {
         com.google.gson.JsonObject body = new com.google.gson.JsonObject();
         body.addProperty("email", email.trim());

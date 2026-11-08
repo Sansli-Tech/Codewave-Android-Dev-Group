@@ -115,7 +115,7 @@ The brief asks for a defect and its correction at each checkpoint.
 | Idempotency (operation receipts) with a mocked database | ✅ 10/10 |
 | Group planner: auto-assign up to 15, new groups only when all are full, locks, Excel workbook | ✅ 20/20 |
 | Delete group: count check (`GROUP_CHANGED`), students become Unassigned, soft-deleted rows detached | ✅ 9/9 |
-| Forgot password: e-mailed code (Brevo simulated), same reply for unknown accounts, one e-mail per minute, code once only, 5-wrong-tries lockout, lecturer code backup, faculty-code route, attempt limit | ✅ 22/22 |
+| Forgot password: e-mailed code (Brevo simulated), same reply for unknown accounts, one e-mail per minute, code once only, 5-wrong-tries lockout, lecturer code backup, faculty-code route, attempt limit, change password while signed in (wrong current, same password, lockout) | ✅ 28/28 |
 
 The harness tests were run by the AI assistant while building the code (see [AI_SOURCE_LOG.md](AI_SOURCE_LOG.md)).
 They are not part of the Gradle build.
@@ -142,6 +142,8 @@ Render (web service) + Aiven (MySQL with an encrypted connection). The hosted da
 | Recovery e-mail | Student saves an e-mail on the profile; it is shown again after reopening |
 | Forgot password | "E-mail me a code" → code arrives → new password works; lecturer code and faculty code backups work |
 | Share code | Claim/reset code dialog: Share opens WhatsApp/SMS with the ready message |
+| Student tabs | Home, Groups and Profile; Back returns to Home; group request from the Groups tab stays Pending until synced |
+| Settings | Opens from ⚙ (student profile) or Settings (lecturer profile); change password, recovery e-mail, theme, sync status, help, about, sign out |
 
 ## 6. Open items
 

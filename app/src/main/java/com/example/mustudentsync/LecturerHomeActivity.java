@@ -54,6 +54,8 @@ public class LecturerHomeActivity extends AppCompatActivity {
         setupQuickActions();
         observeStats();
         findViewById(R.id.btnSeeAllGroups).setOnClickListener(v -> openTab(GroupsActivity.class));
+        findViewById(R.id.btnLecturerHomeSettings).setOnClickListener(v ->
+                startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     @Override

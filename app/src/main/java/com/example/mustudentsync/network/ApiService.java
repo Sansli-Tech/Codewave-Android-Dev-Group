@@ -133,6 +133,11 @@ public interface ApiService {
     @GET("account/email")
     Call<okhttp3.ResponseBody> getRecoveryEmail(@Header("Authorization") String bearer);
 
+    /** Signed in: { current_password, new_password }. */
+    @PUT("account/password")
+    Call<okhttp3.ResponseBody> changePassword(@Header("Authorization") String bearer,
+                                              @Body com.google.gson.JsonObject body);
+
     /** { email } (empty removes it). */
     @PUT("account/email")
     Call<okhttp3.ResponseBody> setRecoveryEmail(@Header("Authorization") String bearer,
