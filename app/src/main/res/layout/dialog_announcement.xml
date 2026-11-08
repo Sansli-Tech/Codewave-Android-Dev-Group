@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Send announcement: title, message, and who gets it (all students or one group). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="24dp">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilAnnouncementTitle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/announce_field_title"
+        app:counterEnabled="true"
+        app:counterMaxLength="120">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etAnnouncementTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:maxLength="120"
+            android:minHeight="48dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilAnnouncementBody"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/announce_field_body"
+        app:counterEnabled="true"
+        app:counterMaxLength="1000">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etAnnouncementBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLength="1000"
+            android:minLines="3" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:labelFor="@id/spinnerAnnouncementAudience"
+        android:text="@string/announce_field_audience"
+        android:textColor="@color/campus_muted"
+        android:textSize="13sp" />
+
+    <Spinner
+        android:id="@+id/spinnerAnnouncementAudience"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/announce_privacy_note"
+        android:textColor="@color/campus_muted"
+        android:textSize="12sp" />
+</LinearLayout>

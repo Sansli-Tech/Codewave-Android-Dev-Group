@@ -110,7 +110,8 @@ The brief asks for a defect and its correction at each checkpoint.
 |---|---|
 | `StudentRepositoryTest` (fake repository, JVM) | ✅ 7/7 after D5 |
 | `MigrationTest` (Room 1 → 2, existing and pending data kept) | ✅ passed on itel A676L, Android 15 |
-| Sync engine harness: order, chaining, combine create+delete, 401 pause, retry with the same ID, refusal blocks later ops, discard, account scoping | ✅ 28/28 |
+| Sync engine harness: order, chaining, combine create+delete, 401 pause, retry with the same ID, refusal blocks later ops, discard, account scoping, group request waits for the lecturer (approve when full refused, one request at a time) | ✅ 30/30 |
+| Notifications backend (mocked DB): request creates no move and notifies lecturers, approve/reject/full/deleted/already-resolved, announcements to all or one group, unread counts and mark-read, device register/sign-out, push text generic (no names), dead tokens removed | ✅ 26/26 |
 | Roster harness: debounce, stale reply ignored, offline fallback, pending overlay, paging | ✅ 5/5 |
 | Idempotency (operation receipts) with a mocked database | ✅ 10/10 |
 | Group planner: auto-assign up to 15, new groups only when all are full, locks, Excel workbook | ✅ 20/20 |
@@ -142,7 +143,10 @@ Render (web service) + Aiven (MySQL with an encrypted connection). The hosted da
 | Recovery e-mail | Student saves an e-mail on the profile; it is shown again after reopening |
 | Forgot password | "E-mail me a code" → code arrives → new password works; lecturer code and faculty code backups work |
 | Share code | Claim/reset code dialog: Share opens WhatsApp/SMS with the ready message |
-| Student tabs | Home, Groups and Profile; Back returns to Home; group request from the Groups tab stays Pending until synced |
+| Student tabs | Home, Groups, Notifications and Profile; Back returns to Home |
+| Group request approval | Student asks for G05 → stays in old group, "waiting for your lecturer". Lecturer's 🔔 shows 1; Approve → student moves (after sync) and gets a notification; Reject with a note → student sees the note. Approve when the group is full → refused, request stays waiting. Second request while one waits → refused (REQUEST_PENDING). Withdraw works. |
+| Announcements | Lecturer sends to All, then to one group: only that group's students receive it; badge on the Notifications tab; opening the tab clears the badge |
+| Push (phone) | App closed: alert arrives with only "You have N unread notifications". After sign-out: "Sign in to read it". Lock screen shows only "MUStudentSync". No names or text in any alert. |
 | Settings | Opens from ⚙ (student profile) or Settings (lecturer profile); change password, recovery e-mail, theme, sync status, help, about, sign out |
 
 ## 6. Open items

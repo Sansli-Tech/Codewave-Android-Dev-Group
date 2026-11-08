@@ -109,7 +109,8 @@ saved offline shows **Pending** and reserves nothing.
 | Roster, create, edit, delete, claim codes | ✔ | ✘ 403 |
 | Assign a group directly | ✔ | ✘ |
 | Own profile: name, programme | — | ✔ `/me/student` |
-| Ask for a group (server checks capacity) | — | ✔ `/me/group-request` |
+| Ask for a group (a lecturer approves; capacity checked at approval) | ✔ approves `/group-requests` | ✔ asks `/me/group-request` |
+| Send announcements (all students or one group) | ✔ `/announcements` | ✘ reads them in Notifications |
 | Change own student number | ✔ approves a request | asks only (`/me/correction-requests`) |
 
 Checked on the server in `requireRole` and in `/me` (the student comes from the token).

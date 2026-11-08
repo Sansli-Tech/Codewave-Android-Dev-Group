@@ -13,6 +13,7 @@ the group checked it. Each member adds their own entries.
 | Oct–Nov 2026 | | Claude | Backend: `idempotency.js` (operation receipts), capacity locking with group lock first and `LOCK IN SHARE MODE`, soft delete disabling the account, `/api/me` routes, correction requests, HTTPS middleware | Code merged into `ICT361_Backend` | `test:challenge2` passed, `test:challenge1` 20/20, `test:roles` 17/17 on our machine |
 | Oct–Nov 2026 | | Claude | App: Room migration 1→2, `OutboxRepository`, `SyncManager`, `SyncWorker`/`SyncScheduler`, status labels, discard, student profile screen, online paged roster, Sharesheet summary | Code merged into `app/` | Built in Android Studio; `MigrationTest` passed on our phone; manual checks in `EVIDENCE_CHECKLIST.md` |
 | Oct–Nov 2026 | | Claude | Test scripts: Challenge 1, Challenge 2, roles test, make test student, check capacity | `ICT361_Backend/scripts/` | Run against our own server with fictitious students |
+| Nov 2026 | | Claude | Group requests approved by a lecturer, notifications (bell, Notifications tab), announcements, Firebase push with generic alerts only | `src/notifications.js`, `src/push.js`, `src/routes/inbox.js`, `push/` and inbox screens in the app | Mock tests 26/26 and sync harness 30/30 by the AI; ⏳ on our phones |
 | Nov 2026 | | Claude | Draft README, ER diagram, API contract, architecture, test evidence, checklists | `README.md`, `docs/` | Checked against our code and test output; results we have not run are marked ⏳ |
 
 ### Problems the AI caused or found, and what we did
@@ -42,5 +43,6 @@ Be honest here; the marker will check it against the brief.
 | Android Developers: Sharesheet (`Intent.createChooser`) | Share group summary |
 | MySQL 8 Reference: InnoDB locking reads (`FOR UPDATE`, `LOCK IN SHARE MODE`) | Capacity check |
 | IETF draft "The Idempotency-Key HTTP Header Field" | Operation ID header |
+| Firebase documentation: Cloud Messaging (Android client, Admin SDK `sendEach`), Android notification visibility | Push notifications |
 | Express, helmet, mysql2, jsonwebtoken, bcryptjs documentation | Backend |
 | ICT361 lecture notes and lab brief | Requirements |

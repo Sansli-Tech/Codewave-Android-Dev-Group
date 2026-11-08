@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lecturer inbox: requests to decide, Send announcement, recent notifications. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/campus_ground"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarInbox"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/campus_card"
+        app:navigationContentDescription="@string/settings_back"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:title="@string/inbox_title" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressInbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvInboxOffline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_campus_chip_warn"
+                android:accessibilityLiveRegion="polite"
+                android:padding="12dp"
+                android:text="@string/inbox_offline"
+                android:textColor="@color/campus_warn_text"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnInboxAnnounce"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="52dp"
+                    android:text="@string/announce_button" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnInboxRefresh"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:minHeight="52dp"
+                    android:text="@string/inbox_refresh" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvInboxRequestsTitle"
+                style="@style/TextAppearance.MUSync.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:accessibilityHeading="true"
+                android:text="@string/inbox_requests_title_plain" />
+
+            <LinearLayout
+                android:id="@+id/listInboxRequests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_campus_card"
+                android:divider="?android:attr/listDivider"
+                android:orientation="vertical"
+                android:showDividers="middle" />
+
+            <TextView
+                android:id="@+id/tvInboxNotificationsTitle"
+                style="@style/TextAppearance.MUSync.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:accessibilityHeading="true"
+                android:text="@string/inbox_notifications_title" />
+
+            <LinearLayout
+                android:id="@+id/listInboxNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_campus_card"
+                android:divider="?android:attr/listDivider"
+                android:orientation="vertical"
+                android:showDividers="middle" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

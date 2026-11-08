@@ -222,6 +222,23 @@ public class SyncManager {
             }
             if (local == null) return;
 
+            if (PendingOperationEntity.TYPE_GROUP_REQUEST.equals(op.type)) {
+                // The request reached the server. The group only changes when a lecturer approves.
+                String asked = null;
+                try {
+                    asked = str(JsonParser.parseString(body).getAsJsonObject(), "group_code", null);
+                } catch (Exception ignored) {
+                    // keep the generic wording
+                }
+                local.syncMessage = "Request for " + (asked != null ? asked : "the group")
+                        + " sent. Waiting for your lecturer.";
+                boolean stillQueued = ops.countToSendFor(op.accountId, op.studentId) > 0;
+                local.syncState = stillQueued ? SyncState.PENDING : SyncState.SYNCED;
+                if (!stillQueued) local.pendingJson = null;
+                dao.update(local);
+                return;
+            }
+
             boolean correction = PendingOperationEntity.TYPE_CORRECTION_REQUEST.equals(op.type);
             JsonObject server = studentIn(body);
             if (correction) {
@@ -311,7 +328,13 @@ public class SyncManager {
         if ("INVALID_PROGRAMME".equals(error)) return "The server doesn't recognise that programme.";
         if ("INVALID_GROUP".equals(error)) return "The server doesn't recognise that group.";
         if ("OPERATION_ID_REUSED".equals(error)) return "This change conflicts with an earlier one. Discard it and edit again.";
-        if ("REQUEST_PENDING".equals(error)) return "You already have a number correction waiting for your lecturer.";
+        if ("REQUEST_PENDING".equals(error)) {
+            if (PendingOperationEntity.TYPE_GROUP_REQUEST.equals(op.type)) {
+                return serverMessage != null ? serverMessage : "You already have a group request waiting for your lecturer.";
+            }
+            return "You already have a number correction waiting for your lecturer.";
+        }
+        if ("ALREADY_IN_GROUP".equals(error)) return serverMessage != null ? serverMessage : "You are already in that group.";
         if ("SAME_NUMBER".equals(error)) return "That is already your student number.";
         if ("FIELD_NOT_PERMITTED".equals(error)) return "Students can't change that field directly.";
         if ("VALIDATION_ERROR".equals(error)) {
@@ -320,6 +343,7 @@ public class SyncManager {
                     : "The server rejected the details. Check them and try again.";
         }
         if (code == 403) return "Only lecturers can make this change.";
+        if (serverMessage != null) return serverMessage;
         return "The server refused this change (" + code + (error != null ? " " + error : "") + ").";
     }
 

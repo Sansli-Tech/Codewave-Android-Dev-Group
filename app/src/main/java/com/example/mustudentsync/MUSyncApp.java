@@ -23,10 +23,12 @@ public class MUSyncApp extends Application {
     public void onCreate() {
         super.onCreate();
         ThemePrefs.apply(this);
+        com.example.mustudentsync.push.NotificationCenter.createChannel(this);
 
         // Signed in from an earlier run: keep background sync going (Activity E).
         if (new com.example.mustudentsync.util.SessionManager(this).isLoggedIn()) {
             com.example.mustudentsync.sync.SyncScheduler.start(this);
+            com.example.mustudentsync.push.PushRegistrar.register(this);   // token may have changed
         }
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {

@@ -38,6 +38,9 @@ public class StudentProfileViewModel extends AndroidViewModel {
         public int capacity;
         public String correctionNumber;   // null if the student never asked
         public String correctionStatus;   // PENDING, APPROVED or REJECTED
+        public String groupRequestCode;   // latest group request, null if none
+        public String groupRequestStatus; // PENDING, APPROVED, REJECTED or CANCELLED
+        public String groupRequestNote;   // the lecturer's note, if any
     }
 
     private final RoomStudentRepository repository;
@@ -88,6 +91,12 @@ public class StudentProfileViewModel extends AndroidViewModel {
                         info.activeStudents = number(group, "active_students");
                         info.capacity = number(group, "capacity");
                     }
+                    JsonObject groupRequest = obj(o, "group_request");
+                    if (groupRequest != null) {
+                        info.groupRequestCode = text(groupRequest, "group_code");
+                        info.groupRequestStatus = text(groupRequest, "status");
+                        info.groupRequestNote = text(groupRequest, "note");
+                    }
                     JsonObject correction = obj(o, "correction_request");
                     if (correction != null) {
                         info.correctionNumber = text(correction, "requested_number");
@@ -107,6 +116,29 @@ public class StudentProfileViewModel extends AndroidViewModel {
 
     public void requestGroup(String groupCode, OutboxRepository.Callback cb) {
         outbox.enqueueGroupRequest(studentId, groupCode, cb);
+    }
+
+    /** Withdraws the request waiting for the lecturer (online only: it is already on the server). */
+    public void cancelGroupRequest(OutboxRepository.Callback cb) {
+        android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+        executor.execute(() -> {
+            boolean ok = false;
+            String message;
+            try {
+                Response<ResponseBody> res = RetrofitClient.getApiService().cancelGroupRequestOp(
+                        session.getBearerToken(), java.util.UUID.randomUUID().toString(), new JsonObject()).execute();
+                ok = res.isSuccessful() || res.code() == 404;   // 404: nothing was waiting any more
+                message = ok ? "Request withdrawn." : "Couldn't withdraw the request (" + res.code() + ").";
+            } catch (Exception e) {
+                message = "You're offline. Try again when you're connected.";
+            }
+            final boolean done = ok;
+            final String text = message;
+            main.post(() -> {
+                cb.onDone(done, text);
+                refreshServerInfo();
+            });
+        });
     }
 
     public void requestCorrection(String number, OutboxRepository.Callback cb) {

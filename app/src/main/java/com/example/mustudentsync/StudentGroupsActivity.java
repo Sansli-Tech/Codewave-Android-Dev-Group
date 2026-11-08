@@ -27,8 +27,8 @@ import java.util.List;
 /**
  * Student Groups tab: every lab group with live occupancy from the server.
  * Tapping a group with free places asks for a place. The request goes through the same offline
- * outbox as every other change: it stays Pending until the server confirms, and the server
- * refuses it (GROUP_FULL) if the group fills up first, keeping the old group.
+ * outbox as every other change. Once it reaches the server it waits for a lecturer, who approves
+ * (the student moves) or rejects it; the student is told in Notifications.
  * Students see counts only, never other students' names.
  */
 public class StudentGroupsActivity extends AppCompatActivity {
@@ -39,6 +39,7 @@ public class StudentGroupsActivity extends AppCompatActivity {
     private LinearLayout list;
     private View progress, retry;
     private StudentEntity me;
+    private StudentProfileViewModel.ServerInfo server;
     private List<GroupListResponse.Group> latest = new ArrayList<>();
 
     @Override
@@ -68,6 +69,11 @@ public class StudentGroupsActivity extends AppCompatActivity {
             render();
         });
         groupsVm.getStatus().observe(this, this::showStatus);
+        profile.getServerInfo().observe(this, info -> {
+            server = info;
+            showMine();
+        });
+        tvMine.setOnClickListener(v -> offerCancel());
         retry.setOnClickListener(v -> groupsVm.refresh());
     }
 
@@ -75,6 +81,7 @@ public class StudentGroupsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         groupsVm.refresh();   // occupancy changes all the time
+        profile.refreshServerInfo();   // request status (waiting / approved / rejected)
     }
 
     private void showStatus(StudentGroupsViewModel.Status s) {
@@ -102,7 +109,19 @@ public class StudentGroupsActivity extends AppCompatActivity {
         return me.labGroup;
     }
 
+    /** A request the lecturer hasn't answered yet (on the server). */
+    private String waitingOnServer() {
+        return server != null && server.online && "PENDING".equals(server.groupRequestStatus)
+                ? server.groupRequestCode : null;
+    }
+
+    /** Not sent yet (this phone), or sent and waiting for the lecturer. */
     private String pendingRequest() {
+        String local = unsentRequest();
+        return local != null ? local : waitingOnServer();
+    }
+
+    private String unsentRequest() {
         if (me == null || me.pendingJson == null || SyncState.SYNCED.equals(me.syncState)) return null;
         try {
             JsonObject o = JsonParser.parseString(me.pendingJson).getAsJsonObject();
@@ -116,8 +135,16 @@ public class StudentGroupsActivity extends AppCompatActivity {
         String mine = myGroup();
         String text = mine != null ? getString(R.string.student_groups_mine, mine)
                 : getString(R.string.student_groups_mine_none);
-        String requested = pendingRequest();
-        if (requested != null) text += "\n" + getString(R.string.student_groups_requested, requested);
+        String unsent = unsentRequest();
+        String waiting = waitingOnServer();
+        if (unsent != null) {
+            text += "\n" + getString(R.string.student_groups_requested, unsent);
+        } else if (waiting != null) {
+            text += "\n" + getString(R.string.student_groups_waiting_lecturer, waiting);
+        } else if (server != null && "REJECTED".equals(server.groupRequestStatus)) {
+            text += "\n" + getString(R.string.student_groups_rejected, server.groupRequestCode)
+                    + (server.groupRequestNote != null ? " " + server.groupRequestNote : "");
+        }
         if (me != null && SyncState.ACTION_REQUIRED.equals(me.syncState) && me.syncMessage != null) {
             text += "\n" + me.syncMessage;
         }
@@ -148,6 +175,20 @@ public class StudentGroupsActivity extends AppCompatActivity {
                 .setMessage(getString(R.string.student_groups_confirm_message, places))
                 .setPositiveButton(R.string.student_groups_confirm, (d, w) ->
                         profile.requestGroup(code, (ok, message) ->
+                                Toast.makeText(this, message, Toast.LENGTH_LONG).show()))
+                .setNegativeButton(R.string.btn_cancel, null)
+                .show();
+    }
+
+    /** Tap the "my group" card while a request waits for the lecturer: offer to withdraw it. */
+    private void offerCancel() {
+        String waiting = waitingOnServer();
+        if (waiting == null || unsentRequest() != null) return;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.student_groups_cancel_title, waiting))
+                .setMessage(R.string.student_groups_cancel_message)
+                .setPositiveButton(R.string.student_groups_cancel_yes, (d, w) ->
+                        profile.cancelGroupRequest((ok, message) ->
                                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()))
                 .setNegativeButton(R.string.btn_cancel, null)
                 .show();

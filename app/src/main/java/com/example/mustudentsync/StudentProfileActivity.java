@@ -106,24 +106,9 @@ public class StudentProfileActivity extends AppCompatActivity {
         outState.putBoolean(KEY_POPULATED, populated);
     }
 
-    /** Clears the session and this phone's cached data; unsent changes stay queued for this account. */
+    /** Same sign-out as Settings: clears the session and cached data, alerts become generic. */
     private void signOut() {
-        com.example.mustudentsync.util.SessionManager session =
-                new com.example.mustudentsync.util.SessionManager(this);
-        android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
-        java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> {
-            SyncScheduler.stop(getApplicationContext());
-            com.example.mustudentsync.data.local.AppDatabase
-                    .clearCachedData(getApplicationContext()); // off the main thread
-            session.clearSession();
-            main.post(() -> {
-                android.content.Intent landing = new android.content.Intent(this, LandingActivity.class);
-                landing.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-                        | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(landing);
-                finish();
-            });
-        });
+        com.example.mustudentsync.util.SignOut.run(this);
     }
 
     // ------------------------------------------------------------ recovery e-mail

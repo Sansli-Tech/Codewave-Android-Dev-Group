@@ -56,12 +56,16 @@ public class LecturerHomeActivity extends AppCompatActivity {
         findViewById(R.id.btnSeeAllGroups).setOnClickListener(v -> openTab(GroupsActivity.class));
         findViewById(R.id.btnLecturerHomeSettings).setOnClickListener(v ->
                 startActivity(new Intent(this, SettingsActivity.class)));
+        com.example.mustudentsync.push.BellBadge.bind(this, findViewById(R.id.bellFrame),
+                () -> startActivity(new Intent(this, LecturerInboxActivity.class)));
+        com.example.mustudentsync.push.NotifyPermission.askOnce(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         showSyncState();
+        com.example.mustudentsync.push.NotificationCenter.refreshUnread(this);
         // Pull the latest changes each time Home is shown; the counts update by themselves.
         new SyncManager(this).syncNow((ok, msg) -> showSyncState());
     }

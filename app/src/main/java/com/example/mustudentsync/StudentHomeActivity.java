@@ -33,6 +33,8 @@ public class StudentHomeActivity extends AppCompatActivity {
     private StudentProfileViewModel viewModel;
     private TextView tvName, chipSync, tvGroupCode, tvOccupancy, tvPending, tvRecovery;
     private LinearProgressIndicator bar;
+    private StudentEntity student;
+    private StudentProfileViewModel.ServerInfo server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class StudentHomeActivity extends AppCompatActivity {
 
         StudentNav.setup(this, findViewById(R.id.bottomNavStudent), R.id.nav_student_home);
         BackToExit.install(this);
+        com.example.mustudentsync.push.NotifyPermission.askOnce(this);
 
         tvName = findViewById(R.id.tvStudentHomeName);
         chipSync = findViewById(R.id.chipStudentSync);
@@ -81,6 +84,7 @@ public class StudentHomeActivity extends AppCompatActivity {
         // Fresh data each time Home is shown: pull changes, live occupancy, recovery e-mail.
         new SyncManager(this).syncNow((ok, msg) -> viewModel.refreshServerInfo());
         viewModel.refreshServerInfo();
+        com.example.mustudentsync.push.NotificationCenter.refreshUnread(this);
         new AccountManager(this).getRecoveryEmail((ok, email) -> {
             if (isFinishing()) return;
             // Only remind when the server answered and has no address (offline: say nothing).
@@ -90,6 +94,7 @@ public class StudentHomeActivity extends AppCompatActivity {
 
     private void showStudent(StudentEntity s) {
         if (s == null) return;
+        student = s;
         tvName.setText(s.fullName);
 
         boolean assigned = s.labGroup != null && !s.labGroup.isEmpty() && !"Unassigned".equals(s.labGroup);
@@ -114,14 +119,31 @@ public class StudentHomeActivity extends AppCompatActivity {
         } else if (!synced) {
             waiting = getString(R.string.student_home_changes_pending, labelFor(state));
         }
+        if (waiting == null) waiting = lecturerAnswer();
         tvPending.setVisibility(waiting != null ? View.VISIBLE : View.GONE);
         if (waiting != null) tvPending.setText(waiting);
         tvPending.setOnClickListener(attention
-                ? v -> StudentNav.open(this, R.id.nav_student_profile, R.id.nav_student_home) : null);
+                ? v -> StudentNav.open(this, R.id.nav_student_profile, R.id.nav_student_home)
+                : v -> StudentNav.open(this, R.id.nav_student_groups, R.id.nav_student_home));
+    }
+
+    /** Where the group request stands on the server: waiting for the lecturer, or rejected. */
+    private String lecturerAnswer() {
+        if (server == null || !server.online || server.groupRequestCode == null) return null;
+        if ("PENDING".equals(server.groupRequestStatus)) {
+            return getString(R.string.student_groups_waiting_lecturer, server.groupRequestCode);
+        }
+        if ("REJECTED".equals(server.groupRequestStatus)) {
+            return getString(R.string.student_groups_rejected, server.groupRequestCode)
+                    + (server.groupRequestNote != null ? " " + server.groupRequestNote : "");
+        }
+        return null;
     }
 
     private void showServerInfo(StudentProfileViewModel.ServerInfo info) {
         if (info == null) return;
+        server = info;
+        if (student != null) showStudent(student);   // refresh the "waiting" notice
         if (!info.online) {
             tvOccupancy.setText(R.string.student_home_offline);
             bar.setVisibility(View.GONE);

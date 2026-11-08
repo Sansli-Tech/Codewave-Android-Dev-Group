@@ -2,11 +2,12 @@ const express = require('express');
 const pool = require('../config/database');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const { mutation } = require('../idempotency');
+const inbox = require('../notifications');
 
 // Lecturer side of student-number corrections. Only a lecturer can change a number,
 // and only by approving a request, so a student can never take over someone else's identity.
 const router = express.Router();
-router.use(authenticateToken, requireRole('LECTURER'));
+router.use(inbox.schemaReady, authenticateToken, requireRole('LECTURER'));
 
 // GET /api/correction-requests - pending requests, oldest first.
 router.get('/', async (req, res) => {
@@ -84,6 +85,14 @@ router.post('/:id/resolve', mutation('Correction resolve', async (req, connectio
      WHERE request_id = ?`,
     [status, note, req.user.accountId, request.request_id]
   );
+  await inbox.notify(connection, [await inbox.studentAccount(connection, request.student_id)], {
+    kind: decision === 'APPROVE' ? 'CORRECTION_APPROVED' : 'CORRECTION_REJECTED',
+    title: decision === 'APPROVE' ? 'Student number corrected' : 'Number correction not approved',
+    body: decision === 'APPROVE'
+      ? `Your student number is now ${request.requested_number}.${note ? ' Your lecturer said: ' + note : ''}`
+      : (note ? `Your lecturer said: ${note}` : 'Your student number was not changed.'),
+    refId: request.request_id
+  });
   return {
     status: 200,
     body: { request_id: request.request_id, status, student_id: request.student_id, record_version: recordVersion }

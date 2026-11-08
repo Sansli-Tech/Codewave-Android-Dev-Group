@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bell with an unread count (lecturer Home). The count is hidden when it is 0. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bellFrame"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:layout_marginStart="4dp">
+
+    <ImageButton
+        android:id="@+id/btnBell"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/bell_description"
+        android:src="@drawable/ic_notification"
+        app:tint="@color/campus_text" />
+
+    <TextView
+        android:id="@+id/tvBellBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_badge"
+        android:gravity="center"
+        android:importantForAccessibility="no"
+        android:minWidth="18dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@android:color/white"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+</FrameLayout>

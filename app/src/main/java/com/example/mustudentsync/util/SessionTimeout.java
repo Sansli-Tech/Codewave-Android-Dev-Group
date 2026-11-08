@@ -118,6 +118,7 @@ public final class SessionTimeout {
             // Unsent changes stay queued for this account and resume at the next sign-in.
             com.example.mustudentsync.sync.SyncScheduler.stop(app);
             AppDatabase.clearCachedData(app); // off the main thread
+            com.example.mustudentsync.push.PushRegistrar.signedOut(app);   // alerts become generic
             new SessionManager(app).clearSession();
             lastActive = 0;
             main.post(() -> {

@@ -32,7 +32,14 @@ Students and lecturers can reset a forgotten password from the sign-in screen: a
 e-mailed to them (students add a recovery e-mail on their profile; lecturers use their staff e-mail).
 Backups: a one-time code from the lecturer, or staff ID + faculty code for lecturers.
 
-Students have Home, Groups and Profile tabs. A **Settings** screen (both roles) holds change
+**Group requests need a lecturer.** A student's request for a group no longer moves them: it
+waits for a lecturer, who sees it under the 🔔 bell on Home (with the unread count) and approves
+or rejects it (optional note). Lecturers can also **send announcements** to all students or one
+group. Students read answers and announcements in a **Notifications** tab. Phones get an alert even
+when the app is closed (Firebase Cloud Messaging); the alert never contains names or message text,
+and after sign-out it only says "Sign in to read it". Setup: `docs/DEPLOYMENT.md`, "Push notifications".
+
+Students have Home, Groups, Notifications and Profile tabs. A **Settings** screen (both roles) holds change
 password, recovery e-mail, appearance (Phone / Light / Dark), sync status, help, about and sign out.
 
 ## 1. Backend setup

@@ -3,11 +3,12 @@ const crypto = require('crypto');
 const pool = require('../config/database');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const { mutation } = require('../idempotency');
+const inbox = require('../notifications');
 
 // Student self-service. The student is ALWAYS the one in the verified token (req.user.studentId),
 // never an ID from the URL or body, so a student can only ever see or change their own record.
 const router = express.Router();
-router.use(authenticateToken, requireRole('STUDENT'));
+router.use(inbox.schemaReady, authenticateToken, requireRole('STUDENT'));
 
 const NAME_RE = /^[\p{L}\p{M} .'-]+$/u;
 
@@ -42,6 +43,16 @@ async function latestCorrection(db, studentId) {
   const [rows] = await db.execute(
     `SELECT request_id, requested_number, status, note, created_at, resolved_at
      FROM change_requests WHERE student_id = ?
+     ORDER BY created_at DESC LIMIT 1`,
+    [studentId]
+  );
+  return rows[0] || null;
+}
+
+async function latestGroupRequest(db, studentId) {
+  const [rows] = await db.execute(
+    `SELECT request_id, group_code, status, note, created_at, resolved_at
+     FROM group_requests WHERE student_id = ?
      ORDER BY created_at DESC LIMIT 1`,
     [studentId]
   );
@@ -87,6 +98,7 @@ router.get('/student', async (req, res) => {
     const out = await profile(pool, req.user.studentId);
     if (!out.student) return res.status(404).json({ error: 'STUDENT_NOT_FOUND' });
     out.correction_request = await latestCorrection(pool, req.user.studentId);
+    out.group_request = await latestGroupRequest(pool, req.user.studentId);
     return res.json(out);
   } catch (error) {
     console.error('Profile lookup failed:', error.message);
@@ -151,59 +163,57 @@ router.put('/student', mutation('Profile update', async (req, connection) => {
   return { status: 200, body: await profile(connection, req.user.studentId) };
 }));
 
-// POST /api/me/group-request - ask for a place in a group. Body: { group_code, expected_version }
-// Succeeds only if there is room right now (same lock + count as every lecturer path, Challenge 1).
-// GROUP_FULL leaves the student in their previous group, or Unassigned.
+// POST /api/me/group-request - ask for a place in a group. Body: { group_code }
+// The student is NOT moved: the request waits for a lecturer (POST /api/group-requests/:id/resolve),
+// who approves it with the usual locked capacity check, or rejects it. One pending request at a time.
+// (expected_version is still accepted from older app versions and ignored.)
 router.post('/group-request', mutation('Group request', async (req, connection) => {
   const b = req.body || {};
   const code = typeof b.group_code === 'string' ? b.group_code.trim().toUpperCase() : '';
-  if (!/^G[0-9]{2}$/.test(code)) {
+  if (!/^G[0-9]{2,3}$/.test(code)) {
     return { status: 400, body: { error: 'INVALID_GROUP', message: 'Choose a lab group.' } };
   }
-  const bad = versionError(b.expected_version);
-  if (bad) return bad;
+  const [groups] = await connection.execute('SELECT group_id FROM lab_groups WHERE group_code = ?', [code]);
+  if (!groups.length) return { status: 400, body: { error: 'INVALID_GROUP', message: 'That group does not exist.' } };
 
-  // Lock order: group first, then the student row (same as the lecturer routes).
-  const [groups] = await connection.execute(
-    'SELECT group_id, group_code, capacity FROM lab_groups WHERE group_code = ? FOR UPDATE',
-    [code]
-  );
-  if (!groups.length) return { status: 400, body: { error: 'INVALID_GROUP' } };
-  const group = groups[0];
-
-  const own = await lockOwnRow(connection, req.user.studentId, b.expected_version);
-  if (own.error) return own.error;
-
-  if (own.row.group_id === group.group_id) {
-    return { status: 200, body: await profile(connection, req.user.studentId) };
+  const [me] = await connection.execute(
+    'SELECT student_name, group_id, is_deleted FROM students WHERE student_id = ?', [req.user.studentId]);
+  if (!me.length || me[0].is_deleted) return { status: 410, body: { error: 'STUDENT_DELETED' } };
+  if (me[0].group_id === groups[0].group_id) {
+    return { status: 409, body: { error: 'ALREADY_IN_GROUP', message: `You are already in ${code}.` } };
   }
-
-  const [countRows] = await connection.execute(
-    `SELECT COUNT(*) AS total FROM students
-     WHERE group_id = ? AND is_deleted = FALSE LOCK IN SHARE MODE`,
-    [group.group_id]
-  );
-  if (Number(countRows[0].total) >= Number(group.capacity)) {
+  // Only the request rows are locked here (lecturer approval locks request, then group, then student).
+  const [pending] = await connection.execute(
+    "SELECT request_id, group_code FROM group_requests WHERE student_id = ? AND status = 'PENDING' FOR UPDATE",
+    [req.user.studentId]);
+  if (pending.length) {
     return {
       status: 409,
-      body: {
-        error: 'GROUP_FULL',
-        message: `${group.group_code} is full. You keep your current group.`,
-        capacity: group.capacity
-      }
+      body: { error: 'REQUEST_PENDING', message: `Your request for ${pending[0].group_code} is still waiting for your lecturer.` }
     };
   }
+  const id = crypto.randomUUID();
+  await connection.execute(
+    'INSERT INTO group_requests (request_id, student_id, group_code) VALUES (?, ?, ?)', [id, req.user.studentId, code]);
+  await inbox.notify(connection, await inbox.lecturerAccounts(connection), {
+    kind: 'GROUP_REQUEST',
+    title: `Group request: ${code}`,
+    body: `${me[0].student_name} asked for a place in ${code}.`,
+    refId: id
+  });
+  return { status: 201, body: { request_id: id, status: 'PENDING', group_code: code } };
+}));
 
-  const newVersion = b.expected_version + 1;
+// POST /api/me/group-request/cancel - withdraw the pending request (nothing else changes).
+router.post('/group-request/cancel', mutation('Cancel group request', async (req, connection) => {
+  const [rows] = await connection.execute(
+    "SELECT request_id FROM group_requests WHERE student_id = ? AND status = 'PENDING' FOR UPDATE",
+    [req.user.studentId]);
+  if (!rows.length) return { status: 404, body: { error: 'NO_PENDING_REQUEST' } };
   await connection.execute(
-    'UPDATE students SET group_id = ?, record_version = ? WHERE student_id = ?',
-    [group.group_id, newVersion, req.user.studentId]
-  );
-  await connection.execute(
-    `INSERT INTO sync_changes (student_id, record_version, change_type) VALUES (?, ?, 'UPSERT')`,
-    [req.user.studentId, newVersion]
-  );
-  return { status: 200, body: await profile(connection, req.user.studentId) };
+    "UPDATE group_requests SET status = 'CANCELLED', resolved_at = CURRENT_TIMESTAMP WHERE request_id = ?",
+    [rows[0].request_id]);
+  return { status: 200, body: { request_id: rows[0].request_id, status: 'CANCELLED' } };
 }));
 
 // POST /api/me/correction-requests - ask the lecturer to correct the student number.
@@ -241,6 +251,12 @@ router.post('/correction-requests', mutation('Correction request', async (req, c
     'INSERT INTO change_requests (request_id, student_id, requested_number) VALUES (?, ?, ?)',
     [id, req.user.studentId, number]
   );
+  await inbox.notify(connection, await inbox.lecturerAccounts(connection), {
+    kind: 'CORRECTION_REQUEST',
+    title: 'Student number correction request',
+    body: `A student asked to change their student number to ${number}.`,
+    refId: id
+  });
   return { status: 201, body: { request_id: id, status: 'PENDING', requested_number: number } };
 }));
 

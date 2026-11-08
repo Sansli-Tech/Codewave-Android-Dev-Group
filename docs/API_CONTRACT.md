@@ -119,9 +119,10 @@ so a student can only ever see or change their own record.
 
 | Method | Route | Op | Body | Success | Errors |
 |---|---|---|---|---|---|
-| GET | `/student` | | — | `200 { student, group: { group_code, capacity, active_students } \| null, correction_request }` | 404, 410 STUDENT_DELETED |
+| GET | `/student` | | — | `200 { student, group: { group_code, capacity, active_students } \| null, correction_request, group_request }` (latest of each, or null) | 404, 410 STUDENT_DELETED |
 | PUT | `/student` | ✔ | `{ student_name?, programme_code?, expected_version }` | `200` profile | 403 FIELD_NOT_PERMITTED (number or group), 400 INVALID_PROGRAMME, 409 VERSION_CONFLICT |
-| POST | `/group-request` | ✔ | `{ group_code, expected_version }` | `200` profile with the new group | 400 INVALID_GROUP, 409 GROUP_FULL (old group kept), 409 VERSION_CONFLICT |
+| POST | `/group-request` | ✔ | `{ group_code }` | `201 { request_id, status: "PENDING", group_code }`: **nobody moves yet**; lecturers are notified | 400 INVALID_GROUP, 409 ALREADY_IN_GROUP, 409 REQUEST_PENDING (one at a time), 410 STUDENT_DELETED |
+| POST | `/group-request/cancel` | ✔ | `{}` | `200 { request_id, status: "CANCELLED" }` | 404 NO_PENDING_REQUEST |
 | POST | `/correction-requests` | ✔ | `{ requested_student_number }` | `201 { request_id, status: "PENDING", requested_number }` | 400 SAME_NUMBER, 409 REQUEST_PENDING |
 | GET | `/correction-requests` | | — | `200 { data: [{ request_id, requested_number, status, note, created_at, resolved_at }] }` (own requests only) | |
 
@@ -131,6 +132,47 @@ so a student can only ever see or change their own record.
 |---|---|---|---|---|---|
 | GET | `/` | | — | `200 { data: [pending requests] }` | |
 | POST | `/:id/resolve` | ✔ | `{ decision: "APPROVE" \| "REJECT", note? }` | `200 { request_id, status, student_id, record_version }` | 400 VALIDATION_ERROR, 404 REQUEST_NOT_FOUND, 409 ALREADY_RESOLVED, 409 NUMBER_TAKEN (request stays pending), 410 STUDENT_DELETED |
+
+## Group requests — `/api/group-requests` (LECTURER only)
+
+A student's request waits here until a lecturer decides. Approving locks the request, then the
+group, then the student (the same order as every other group change), and checks capacity at that
+moment, so two approvals for the last place can't both succeed.
+
+| Method | Route | Op | Body | Success | Errors |
+|---|---|---|---|---|---|
+| GET | `/?status=PENDING` | | — | `200 { data: [{ request_id, requested_group, student_name, student_number, current_group, capacity, active_students, created_at }] }` (oldest first) | 400 INVALID_QUERY |
+| POST | `/:id/resolve` | ✔ | `{ decision: "APPROVE" \| "REJECT", note? }` | `200 { request_id, status, group_code? }`; the student moves (version + 1, sync feed) and is notified | 404 REQUEST_NOT_FOUND, 409 ALREADY_RESOLVED, 409 GROUP_FULL (request stays pending), 409 GROUP_NOT_FOUND, 410 STUDENT_DELETED (request cancelled) |
+
+## Announcements — `/api/announcements` (LECTURER only)
+
+| Method | Route | Op | Body | Success | Errors |
+|---|---|---|---|---|---|
+| POST | `/` | ✔ | `{ title (3–120), body (1–1000), audience: "ALL" \| "G08" }` | `201 { announcement_id, audience, recipients, message }` | 400 VALIDATION_ERROR, 400 INVALID_GROUP |
+| GET | `/` | | — | `200 { data: [last 30 announcements] }` | |
+
+## Notifications — `/api/notifications` (any signed-in role, own only)
+
+Kinds: `GROUP_REQUEST`, `CORRECTION_REQUEST` (to lecturers); `GROUP_REQUEST_APPROVED`,
+`GROUP_REQUEST_REJECTED`, `CORRECTION_APPROVED`, `CORRECTION_REJECTED`, `ANNOUNCEMENT` (to students).
+
+| Method | Route | Body | Success |
+|---|---|---|---|
+| GET | `/?limit=50` | — | `200 { data: [{ notification_id, kind, title, body, ref_id, created_at, read_at }], unread }` newest first |
+| GET | `/unread-count` | — | `200 { unread }` |
+| POST | `/read` | `{ all: true }` or `{ ids: [..] }` | `200 { unread }` |
+
+## Devices (push) — `/api/devices`
+
+| Method | Route | Auth | Body | Effect |
+|---|---|---|---|---|
+| POST | `/` | signed in | `{ token }` (Firebase token) | This phone gets alerts for this account; any earlier owner of the token is replaced |
+| POST | `/signed-out` | none | `{ token }` | Alerts continue but say only "You have a new notification. Sign in to read it." |
+
+**Privacy of phone alerts.** The push itself never contains names, numbers, group codes or the
+announcement text: only "MUStudentSync — You have N unread notifications" (signed in) or the
+sign-in line above (signed out). It is marked *private* on Android, so the lock screen shows only
+"MUStudentSync" unless the user allows more. The content is read in the app after sign-in.
 
 ## Sync pull — `/api/sync`
 

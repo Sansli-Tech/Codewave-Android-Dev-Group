@@ -4,3 +4,4 @@ scripts/.challenge2-state.json
 *.pem
 .env.*
 !.env.example
+firebase-service-account*.json

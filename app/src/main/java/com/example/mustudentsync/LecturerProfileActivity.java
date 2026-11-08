@@ -42,24 +42,8 @@ public class LecturerProfileActivity extends AppCompatActivity {
                         .show());
     }
 
-    /**
-     * Clears the session (token, role, sync cursor) and the local Room copy, so the
-     * next person to sign in on this phone never sees this lecturer's data.
-     */
+    /** Same sign-out as Settings: clears the session and cached data, alerts become generic. */
     private void signOut() {
-        SessionManager session = new SessionManager(this);
-        Handler main = new Handler(Looper.getMainLooper());
-        Executors.newSingleThreadExecutor().execute(() -> {
-            // Removes the cached roster; unsent changes stay queued for this lecturer only.
-            com.example.mustudentsync.sync.SyncScheduler.stop(getApplicationContext());
-            AppDatabase.clearCachedData(getApplicationContext()); // must run off the main thread
-            session.clearSession();
-            main.post(() -> {
-                Intent landing = new Intent(this, LandingActivity.class);
-                landing.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(landing);
-                finish();
-            });
-        });
+        com.example.mustudentsync.util.SignOut.run(this);
     }
 }

@@ -147,6 +147,57 @@ public interface ApiService {
     @POST("auth/lecturer-reset-password")
     Call<okhttp3.ResponseBody> resetLecturerPassword(@Body com.google.gson.JsonObject body);
 
+    // ---- Notifications, push, group requests, announcements ----
+
+    @GET("notifications")
+    Call<okhttp3.ResponseBody> getNotifications(@Header("Authorization") String bearer, @Query("limit") int limit);
+
+    @GET("notifications/unread-count")
+    Call<okhttp3.ResponseBody> unreadCount(@Header("Authorization") String bearer);
+
+    /** { all: true } or { ids: [..] } */
+    @POST("notifications/read")
+    Call<okhttp3.ResponseBody> markNotificationsRead(@Header("Authorization") String bearer,
+                                                     @Body com.google.gson.JsonObject body);
+
+    @POST("devices")
+    Call<okhttp3.ResponseBody> registerDevice(@Header("Authorization") String bearer,
+                                              @Body com.google.gson.JsonObject body);
+
+    /** No sign-in: the phone keeps getting alerts, but only "Sign in to read it". */
+    @POST("devices/signed-out")
+    Call<okhttp3.ResponseBody> deviceSignedOut(@Body com.google.gson.JsonObject body);
+
+    @GET("group-requests")
+    Call<okhttp3.ResponseBody> getGroupRequests(@Header("Authorization") String bearer, @Query("status") String status);
+
+    /** { decision: APPROVE | REJECT, note? } */
+    @POST("group-requests/{id}/resolve")
+    Call<okhttp3.ResponseBody> resolveGroupRequestOp(@Header("Authorization") String bearer,
+                                                     @Header("Idempotency-Key") String operationId,
+                                                     @Path("id") String requestId,
+                                                     @Body com.google.gson.JsonObject body);
+
+    @GET("correction-requests")
+    Call<okhttp3.ResponseBody> getCorrectionRequests(@Header("Authorization") String bearer);
+
+    @POST("correction-requests/{id}/resolve")
+    Call<okhttp3.ResponseBody> resolveCorrectionOp(@Header("Authorization") String bearer,
+                                                   @Header("Idempotency-Key") String operationId,
+                                                   @Path("id") String requestId,
+                                                   @Body com.google.gson.JsonObject body);
+
+    /** { title, body, audience: "ALL" | "G08" } */
+    @POST("announcements")
+    Call<okhttp3.ResponseBody> sendAnnouncementOp(@Header("Authorization") String bearer,
+                                                  @Header("Idempotency-Key") String operationId,
+                                                  @Body com.google.gson.JsonObject body);
+
+    @POST("me/group-request/cancel")
+    Call<okhttp3.ResponseBody> cancelGroupRequestOp(@Header("Authorization") String bearer,
+                                                    @Header("Idempotency-Key") String operationId,
+                                                    @Body com.google.gson.JsonObject body);
+
     // ---- Lecturer: group management and Excel export ----
     // Create and auto-assign carry an Idempotency-Key: a retry after a lost reply is replayed,
     // never applied twice (no second G15, no student moved twice).

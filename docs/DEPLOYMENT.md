@@ -141,3 +141,40 @@ To test on your laptop **without** sending real e-mail, set `MAIL_DEV_LOG=true` 
 
 If e-mails don't arrive: check the spam folder, and look at the server log for
 `Reset e-mail failed: Brevo returned …`, which says what Brevo didn't accept (often an unverified sender).
+
+## Push notifications (Firebase Cloud Messaging)
+
+Without this, everything still works inside the app (bell count, Notifications tab); only the
+alert on a closed phone is missing. Firebase's messaging is free.
+
+**Privacy.** The alert says only "MUStudentSync — You have N unread notifications", or
+"You have a new notification. Sign in to read it." on a phone that signed out. Names, numbers,
+groups and announcement text never leave the server in a push; they are read in the app after
+sign-in. The alert is *private*, so the lock screen shows only "MUStudentSync".
+
+1. Go to console.firebase.google.com → **Add project** (e.g. `MUStudentSync`); Google Analytics
+   is not needed.
+2. **Add app → Android**. Package name: `com.example.mustudentsync`. Download
+   `google-services.json` and put it in the **`app/`** folder (next to `app/build.gradle`).
+   It is in `.gitignore`: don't commit it. Sync Gradle, rebuild and reinstall the app.
+3. **Project settings → Service accounts → Generate new private key**. This downloads a JSON
+   file that lets the server send pushes. Treat it like a password: never commit it, never paste
+   it into a chat.
+4. In `ICT361_Backend`:
+   ```powershell
+   npm install firebase-admin
+   ```
+   Commit `package.json` and `package-lock.json` (Render installs from them).
+5. Tell the server where the key is:
+   - **Laptop:** save the file as `ICT361_Backend/firebase-service-account.json` (ignored by git)
+     and add `FIREBASE_SERVICE_ACCOUNT_FILE=./firebase-service-account.json` to `.env`.
+   - **Render:** Environment → add `FIREBASE_SERVICE_ACCOUNT` and paste the **whole JSON** as the
+     value (it may be on one line).
+6. Restart. The server log says `Push notifications are on.` (or why they are off).
+7. On the phone, sign in and allow notifications when asked (Android 13+). Then from another
+   phone or account make a group request: the lecturer's phone shows the alert even when the app
+   is closed.
+
+If no alert arrives: check that the phone allows notifications for the app (Settings → Apps →
+MUStudentSync → Notifications), that the app was rebuilt **after** adding `google-services.json`,
+and the server log for `Push failed: …`.

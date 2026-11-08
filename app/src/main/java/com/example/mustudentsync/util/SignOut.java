@@ -22,6 +22,8 @@ public final class SignOut {
 
     public static void run(Activity activity) {
         SessionManager session = new SessionManager(activity);
+        // Alerts keep coming to this phone, but say only "Sign in to read it".
+        com.example.mustudentsync.push.PushRegistrar.signedOut(activity);
         Handler main = new Handler(Looper.getMainLooper());
         Executors.newSingleThreadExecutor().execute(() -> {
             SyncScheduler.stop(activity.getApplicationContext());

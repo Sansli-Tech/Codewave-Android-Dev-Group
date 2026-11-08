@@ -58,6 +58,13 @@ const passwordReset = require('./routes/passwordReset');
 app.use('/api/students', passwordReset.lecturerRouter);   // POST /api/students/:id/reset-code
 app.use('/api/auth', passwordReset.publicRouter);         // forgot-password, reset-with-code, lecturer-reset-password
 app.use('/api/account', passwordReset.accountRouter);     // GET/PUT /api/account/email (recovery e-mail)
+const inboxRoutes = require('./routes/inbox');
+app.use('/api/notifications', inboxRoutes.notificationsRouter);   // own feed, unread count, mark read
+app.use('/api/devices', inboxRoutes.devicesRouter);               // phone push registration
+app.use('/api/group-requests', inboxRoutes.groupRequestsRouter);  // LECTURER: approve / reject group requests
+app.use('/api/announcements', inboxRoutes.announcementsRouter);   // LECTURER: send announcements
+// Create the notification tables at start-up (never inside a request's transaction).
+require('./notifications').ensureSchema().catch((e) => console.error('Notification tables:', e.message));
 
 app.use((req, res) => {
   res.status(404).json({

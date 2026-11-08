@@ -3,6 +3,8 @@
 
     <!-- Needed to reach the backend. Without it every network call fails. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+: asked once on Home; without it the in-app badges still work. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MUSyncApp"
@@ -44,6 +46,23 @@
         <activity android:name=".StudentHomeActivity" android:exported="false" />
         <activity android:name=".StudentGroupsActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".LecturerInboxActivity" android:exported="false" />
+        <activity android:name=".StudentNotificationsActivity" android:exported="false" />
+
+        <!-- Push notifications (Firebase). Generic, private alerts only. -->
+        <service
+            android:name=".push.MUMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="mu_updates" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
 
         <!-- Shares the exported Excel file with other apps through a temporary content:// link. -->
         <provider
