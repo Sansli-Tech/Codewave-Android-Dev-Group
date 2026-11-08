@@ -1,129 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Sign in: everything centred (horizontally and vertically), app logo floating at the top. -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Campus photo across the top, fading into the page colour, with the start screen's circuit lines on top. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollViewSignIn"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:background="?android:attr/colorBackground">
 
-    <LinearLayout
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="top"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_campus_building"
+        android:importantForAccessibility="no" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="top"
+        android:background="@drawable/bg_auth_photo_overlay" />
+
+    <!-- Same circuit/network lines as the start screen, only below the photo
+         (the fields have their own solid background, so the lines never show inside them). -->
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:layout_marginTop="300dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_campus_pattern"
+        android:importantForAccessibility="no" />
 
-        <!-- App logo (floats gently; still if the phone's animations are off) -->
-        <ImageView
-            android:id="@+id/imgSignInLogo"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/app_logo_description"
-            android:src="@mipmap/ic_launcher_round" />
-
-        <TextView
-            android:id="@+id/tvSignInTitle"
+    <ScrollView
+        android:id="@+id/scrollViewSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+    
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/title_sign_in"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
-            android:textColor="@color/campus_text"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvSignInSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="center"
-            android:text="@string/desc_sign_in_subtitle"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="@color/campus_muted" />
-
-        <!-- Generic Security Error Banner (protects against account enumeration) -->
-        <TextView
-            android:id="@+id/tvGenericError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="?attr/colorErrorContainer"
-            android:gravity="center"
-            android:padding="12dp"
-            android:text="@string/err_invalid_credentials"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?attr/colorOnErrorContainer"
-            android:visibility="gone"
-            android:accessibilityLiveRegion="polite" />
-
-        <!-- Student Number or Email Field -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilLoginId"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="@string/label_login_id"
-            app:errorEnabled="true">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etLoginId"
+            android:orientation="vertical"
+            android:padding="24dp">
+    
+            <!-- App logo (floats gently; still if the phone's animations are off) -->
+            <ImageView
+                android:id="@+id/imgSignInLogo"
+                android:layout_width="136dp"
+                android:layout_height="136dp"
+                android:padding="20dp"
+                android:background="@drawable/bg_logo_shadow"
+                android:contentDescription="@string/app_logo_description"
+                android:src="@mipmap/ic_launcher_round" />
+    
+            <TextView
+                android:id="@+id/tvSignInTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:inputType="textEmailAddress"
-                android:contentDescription="@string/label_login_id" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Password Field (Masked input) -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPassword"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/label_password"
-            app:passwordToggleEnabled="true"
-            app:errorEnabled="true">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPassword"
+                android:gravity="center"
+                android:text="@string/title_sign_in"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textColor="@color/campus_text"
+                android:textStyle="bold" />
+    
+            <TextView
+                android:id="@+id/tvSignInSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/desc_sign_in_subtitle"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/campus_muted" />
+    
+            <!-- Generic Security Error Banner (protects against account enumeration) -->
+            <TextView
+                android:id="@+id/tvGenericError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="?attr/colorErrorContainer"
+                android:gravity="center"
+                android:padding="12dp"
+                android:text="@string/err_invalid_credentials"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnErrorContainer"
+                android:visibility="gone"
+                android:accessibilityLiveRegion="polite" />
+    
+            <!-- Student Number or Email Field -->
+            <com.google.android.material.textfield.TextInputLayout
+
+                app:boxBackgroundColor="@color/campus_card"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                android:id="@+id/tilLoginId"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="@string/label_login_id"
+                app:errorEnabled="true">
+    
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLoginId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:inputType="textEmailAddress"
+                    android:contentDescription="@string/label_login_id" />
+            </com.google.android.material.textfield.TextInputLayout>
+    
+            <!-- Password Field (Masked input) -->
+            <com.google.android.material.textfield.TextInputLayout
+
+                app:boxBackgroundColor="@color/campus_card"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                android:id="@+id/tilPassword"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/label_password"
+                app:passwordToggleEnabled="true"
+                app:errorEnabled="true">
+    
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:inputType="textPassword"
+                    android:contentDescription="@string/label_password" />
+            </com.google.android.material.textfield.TextInputLayout>
+    
+            <!-- Sign In Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSignIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:minHeight="52dp"
+                android:text="@string/btn_sign_in" />
+    
+            <!-- Forgot password -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnForgotPassword"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:minHeight="48dp"
-                android:inputType="textPassword"
-                android:contentDescription="@string/label_password" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Sign In Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignIn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:minHeight="52dp"
-            android:text="@string/btn_sign_in" />
-
-        <!-- Forgot password -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnForgotPassword"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:minHeight="48dp"
-            android:text="@string/link_forgot_password" />
-
-        <!-- Register Link -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnGoToRegister"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:text="@string/link_to_register" />
-    </LinearLayout>
-</ScrollView>
+                android:text="@string/link_forgot_password" />
+    
+            <!-- Register Link -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGoToRegister"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/link_to_register" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

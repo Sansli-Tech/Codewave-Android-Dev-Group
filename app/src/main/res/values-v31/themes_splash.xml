@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ always shows a system splash first. Give it no icon and the app's background
+         colour (light/dark), so it blends straight into the piece-by-piece logo animation. -->
+    <style name="Theme.MUStudentSync.Splash" parent="Theme.MUStudentSync">
+        <item name="android:windowSplashScreenBackground">@color/campus_ground</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/campus_ground</item>
+    </style>
+</resources>

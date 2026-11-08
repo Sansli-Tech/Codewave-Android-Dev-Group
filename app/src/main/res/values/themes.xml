@@ -25,4 +25,8 @@
     </style>
 
     <style name="Theme.MUStudentSync" parent="Base.Theme.MUStudentSync" />
+
+    <!-- Start-up screen (SplashActivity). values-v31 hides the system splash icon so the logo
+         is drawn only once, by the piece-by-piece animation. -->
+    <style name="Theme.MUStudentSync.Splash" parent="Theme.MUStudentSync" />
 </resources>

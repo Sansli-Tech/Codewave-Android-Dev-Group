@@ -16,17 +16,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MUStudentSync">
 
-        <!-- Launcher screen: opens when the app icon is tapped -->
-        <!-- Launcher screen: opens when the app icon is tapped -->
-        <!-- Launcher screen: the landing page (signed-in users are sent straight to their home) -->
+        <!-- Launcher: start-up animation (logo builds piece by piece), then the landing page -->
         <activity
-            android:name=".LandingActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MUStudentSync.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Landing page (signed-in users are sent straight to their home) -->
+        <activity
+            android:name=".LandingActivity"
+            android:exported="false" />
 
         <activity android:name=".SignInActivity" android:exported="false" />
 

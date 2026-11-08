@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Start-up screen: the logo builds itself piece by piece (circle, book, MU, cap), then the
+     name appears. Tap anywhere to skip. Shown only when the app is opened from the launcher. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/splashRoot"
+    android:clipChildren="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_campus_pattern" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!-- Logo pieces, stacked: they line up exactly when every piece is in place -->
+        <FrameLayout
+            android:id="@+id/splashLogo"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:contentDescription="@string/app_logo_description"
+            android:focusable="true"
+            android:padding="22dp">
+
+            <View
+                android:id="@+id/splashShadow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="-22dp"
+                android:alpha="0"
+                android:background="@drawable/bg_logo_shadow"
+                android:importantForAccessibility="no" />
+
+        <ImageView
+            android:id="@+id/splashDisk"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_part_disk" />
+        <ImageView
+            android:id="@+id/splashBook"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_part_book" />
+        <ImageView
+            android:id="@+id/splashLetters"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_part_letters" />
+        <ImageView
+            android:id="@+id/splashCap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_part_cap" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/splashName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:alpha="0"
+            android:text="@string/app_name"
+            android:textColor="@color/campus_text"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/splashTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:alpha="0"
+            android:text="@string/landing_university"
+            android:textColor="@color/campus_muted"
+            android:textSize="14sp" />
+    </LinearLayout>
+</FrameLayout>

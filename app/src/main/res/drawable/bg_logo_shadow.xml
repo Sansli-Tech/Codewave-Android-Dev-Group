@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Soft shadow/glow behind the floating logo on Sign in and Register:
+     dark in light mode (drawable/), white in dark mode (drawable-night/).
+     Shifted down a little so it reads as a shadow under the logo. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="8dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="50%"
+                android:startColor="#CC0B1220"
+                android:centerColor="#800B1220"
+                android:endColor="#000B1220" />
+        </shape>
+    </item>
+</layer-list>

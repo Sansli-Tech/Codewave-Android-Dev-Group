@@ -13,7 +13,7 @@
     <string name="press_back_again">Press back again to exit</string>
 
     <!-- Landing (signed out) -->
-    <string name="landing_university">ICT361 · Mulungushi University</string>
+    <string name="landing_university">Mulungushi University</string>
     <string name="landing_hero_title">Your lab group,\nin your pocket</string>
     <string name="landing_hero_body">Register with your claim code, see your group and keep working when the network drops.</string>
     <string name="landing_sign_in">Sign in</string>
