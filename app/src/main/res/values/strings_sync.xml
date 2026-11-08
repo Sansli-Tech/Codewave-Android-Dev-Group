@@ -261,4 +261,16 @@
     <string name="student_groups_cancel_title">Withdraw your request for %1$s?</string>
     <string name="student_groups_cancel_message">You stay in your current group. You can ask again later.</string>
     <string name="student_groups_cancel_yes">Withdraw</string>
+
+    <!-- Ask to join (students not on the lecturer's list yet) -->
+    <string name="link_ask_to_join">No claim code? Not on your lecturer\'s list yet? Ask to join</string>
+    <string name="join_title">Ask to join</string>
+    <string name="join_subtitle">For students who aren\'t on the lecturer\'s list yet. Your lecturer approves the request; then you sign in with your student number and this password.</string>
+    <string name="join_send">Ask lecturer to approve</string>
+    <string name="join_to_sign_in">Go to sign in</string>
+    <string name="join_have_code">I have a claim code</string>
+    <string name="join_err_name">Letters only (spaces, hyphens and apostrophes are fine), 2–100 characters.</string>
+    <string name="inbox_join_title">Account request</string>
+    <string name="inbox_join_body">%1$s (%2$s, %3$s) isn\'t on the roster and asked for an account. Approving adds them as Unassigned.</string>
+    <string name="inbox_join_what">an account</string>
 </resources>

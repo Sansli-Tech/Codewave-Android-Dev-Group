@@ -280,6 +280,18 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnRegister" />
+
+            <!-- Not on the lecturer's list yet (no claim code): ask to join -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAskToJoin"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/link_ask_to_join"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnRegisterAsLecturer" />
     
         </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

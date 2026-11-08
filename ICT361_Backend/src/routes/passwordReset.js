@@ -300,6 +300,10 @@ publicRouter.post('/forgot-password', async (req, res) => {
     const account = await findAccount(pool, login, false);
     const to = account && recoveryAddress(account);
     const last = account ? lastEmail.get(account.account_id) || 0 : 0;
+    // Server log only (the app always gets the same reply, so accounts can't be discovered).
+    if (!account) console.log('Reset code not sent: no active account for that login.');
+    else if (!to) console.log('Reset code not sent: that account has no recovery e-mail.');
+    else if (Date.now() - last <= 60 * 1000) console.log('Reset code not sent: one was e-mailed less than a minute ago.');
     if (to && Date.now() - last > 60 * 1000) {
       lastEmail.set(account.account_id, Date.now());
       const code = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
@@ -315,6 +319,7 @@ publicRouter.post('/forgot-password', async (req, res) => {
             + `<p>In the app, enter it under <b>Forgot password?</b> with a new password. It works once and expires in ${CODE_MINUTES} minutes.</p>`
             + '<p>If you did not ask for this, ignore this e-mail; your password has not changed.</p>'
         });
+        console.log('Reset code e-mailed (accepted by Brevo).');
       } catch (mailError) {
         console.error('Reset e-mail failed:', mailError.message);   // same reply: never reveal accounts
       }

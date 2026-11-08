@@ -147,6 +147,10 @@
 
             <!-- Name (editable by the student) -->
             <com.google.android.material.textfield.TextInputLayout
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
                 android:id="@+id/tilProfileName"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
@@ -168,6 +172,10 @@
 
             <!-- Program of Study (Editable by student) -->
             <com.google.android.material.textfield.TextInputLayout
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
                 android:id="@+id/tilProfileProgram"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
@@ -343,6 +351,10 @@
                         android:orientation="vertical">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            app:boxCornerRadiusTopStart="16dp"
+                            app:boxCornerRadiusTopEnd="16dp"
+                            app:boxCornerRadiusBottomStart="16dp"
+                            app:boxCornerRadiusBottomEnd="16dp"
                             android:id="@+id/tilRecoveryEmail"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
